@@ -1,10 +1,10 @@
 ## Hyprland for Void Linux
 
-This repository contains template files for building Hyprland using xbps-src.
+This repository contains template files for building [Hyprland](https://github.com/hyprwm/Hyprland) using xbps-src.
 
 ### Usage
 
-Follow the instructions at <https://github.com/void-linux/void-packages> to set up xbps-src for building templates.
+Follow the instructions at [void-packages](https://github.com/void-linux/void-packages) to set up xbps-src for building templates.
 
 Clone this repository:
 
@@ -28,9 +28,6 @@ $ cp -r srcpkgs/* ~/void-packages/srcpkgs/
 Build and install packages
 ```
 $ cd ~/void-packages
-$ ./xbps-src pkg libliftoff
-$ ./xbps-src pkg libdisplay-info
-$ ./xbps-src pkg wayland
 $ ./xbps-src pkg hyprland
 $ sudo xbps-install -R hostdir/binpkgs hyprland
 ```
