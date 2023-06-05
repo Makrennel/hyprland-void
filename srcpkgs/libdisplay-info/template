@@ -1,0 +1,26 @@
+# Template file for 'libdisplay-info'
+pkgname=libdisplay-info
+version=0.1.1
+revision=1
+hostmakedepends="cmake meson ninja pkg-config python3"
+makedepends="hwids"
+short_desc="EDID and DisplayID Library"
+maintainer="Makrennel <makrommel@protonmail.ch>"
+license="MIT"
+homepage="https://gitlab.freedesktop.org/emersion/${pkgname}"
+distfiles="https://gitlab.freedesktop.org/emersion/${pkgname}/-/archive/${version}/${pkgname}-${version}.tar.gz"
+checksum=a5aeef57817916286526292ec816a5338c4d3c0094ce91e584fc82b57070a44f
+
+do_build() {
+	cd ${wrksrc}
+	meson setup --prefix=/usr build/
+	ninja -C build/
+}
+
+do_install() {
+	cd ${wrksrc}
+	DESTDIR=$DESTDIR ninja -C build install
+	vlicense LICENSE
+	vmkdir usr/share/doc/${pkgname}
+	vinstall README.md 644 usr/share/doc/${pkgname}
+}

@@ -1,0 +1,97 @@
+# Template file for 'hyprland'
+pkgname=hyprland
+version=0.26.0
+revision=1
+hostmakedepends="jq git pkg-config glslang hwids meson cmake ninja autoconf mk-configure"
+makedepends="
+	ffmpeg-devel
+	libX11-devel
+	pango-devel
+	libdrm-devel
+	wayland-devel
+	libxkbcommon-devel
+	pixman-devel
+	cairo-devel
+	libseat-devel
+	libinput-devel
+	wayland-protocols
+	xcb-util-renderutil-devel
+	xcb-util-errors-devel
+	xcb-util-wm-devel
+	xorg-server-xwayland
+	vulkan-loader
+	Vulkan-Headers
+	libglvnd-devel
+	libliftoff
+	libdisplay-info
+"
+depends="
+	libxcb
+	xcb-proto
+	xcb-util
+	xcb-util-keysyms
+	libXfixes
+	pixman
+	wayland-protocols
+	cairo
+	pango
+	polkit
+	glslang
+	libinput
+	libxkbcommon
+	wayland
+	xcb-util-errors
+	xcb-util-renderutil
+	xcb-util-wm
+	vulkan-loader
+	Vulkan-ValidationLayers
+	xorg-server-xwayland
+	libliftoff
+	libdisplay-info
+"
+short_desc="Dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
+maintainer="Makrennel <makrommel@protonmail.ch>"
+license="BSD"
+homepage="https://hyprland.org/"
+changelog="https://github.com/hyprwm/Hyprland/releases"
+distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
+checksum=096e478f9f8f4b16bd3d3313f970e216d4ca0d280f6cfddf35126ff8f4350497
+
+#do_fetch() {
+#	git clone --recursive https://github.com/hyprwm/Hyprland ${wrksrc}
+#}
+
+do_build() {
+	cd ${wrksrc}
+#	git submodule update --init
+	make fixwlr
+	cd "./subprojects/wlroots/" && meson build/ --prefix="${wrksrc}/../tmpwlr" --buildtype=release && ninja -C build/ && mkdir -p "${wrksrc}/../tmpwlr" && ninja -C build/ install && cd ../
+	cd udis86 && cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -H./ -B./build -G Ninja && cmake --build ./build --config Release --target all -j${XBPS_MAKEJOBS} && cd ../..
+	make protocols
+	make release
+	cd ./hyprctl && make all && cd ..
+}
+
+do_install() {
+	cd ${wrksrc}
+	
+	vmkdir usr/share/wayland-sessions
+	vmkdir usr/share/hyprland
+	
+	vbin build/Hyprland
+	vbin hyprctl/hyprctl
+	
+	vinstall assets/header.svg 644 usr/share/hyprland
+	vinstall assets/hyprland.png 644 usr/share/hyprland
+	vinstall assets/wall_2K.png 644 usr/share/hyprland
+	vinstall assets/wall_4K.png 644 usr/share/hyprland
+	vinstall assets/wall_8K.png 644 usr/share/hyprland
+
+	vinstall example/hyprland.desktop 644 usr/share/wayland-sessions
+	vinstall example/hyprland.conf 644 usr/share/hyprland
+	
+	vlicense LICENSE
+	
+	vinstall ../tmpwlr/lib/libwlroots.so.12032 644 usr/lib
+}
+
