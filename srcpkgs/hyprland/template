@@ -39,7 +39,7 @@ depends="
 	glslang
 	libinput
 	libxkbcommon
-	wayland
+	wayland>=1.22.0
 	xcb-util-errors
 	xcb-util-renderutil
 	xcb-util-wm

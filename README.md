@@ -27,7 +27,7 @@ $ cp -r srcpkgs/* ~/void-packages/srcpkgs/
 
 Build and install packages
 ```
-cd ~/void-packages
+$ cd ~/void-packages
 $ ./xbps-src pkg libliftoff
 $ ./xbps-src pkg libdisplay-info
 $ ./xbps-src pkg wayland
