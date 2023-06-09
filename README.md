@@ -31,3 +31,9 @@ $ cd ~/void-packages
 $ ./xbps-src pkg hyprland
 $ sudo xbps-install -R hostdir/binpkgs hyprland
 ```
+
+It is also recommended to build and install xdg-desktop-portal-hyprland, which is included in this repository
+```
+$ ./xbps-src pkg xdg-desktop-portal-hyprland
+$ sudo xbps-install -R hostdir/binpkgs xdg-desktop-portal-hyprland
+```
