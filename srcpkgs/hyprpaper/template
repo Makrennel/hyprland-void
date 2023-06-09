@@ -1,0 +1,37 @@
+# Template file for 'hyprpaper'
+pkgname=hyprpaper
+version=0.3.0
+revision=1
+hostmakedepends="pkg-config cmake wayland-devel"
+makedepends="
+	pango-devel
+	cairo-devel
+	libjpeg-turbo-devel
+	wayland-devel
+	wayland-protocols
+	hyprland-protocols
+"
+short_desc="A blazing fast wallpaper utility for wlroots compositors with IPC controls"
+maintainer="Makrennel <makrommel@protonmail.ch>"
+license="BSD"
+homepage="https://github.com/hyprwm/${pkgname}"
+distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
+checksum=0b01e2ea3058e279315f75bedbddc9257c3aeeebd00a781fd56be4897a5d0612
+
+do_build() {
+	cd ${wrksrc}
+	cmake \
+		--no-warn-unused-cli \
+		-G "Unix Makefiles" \
+		-D CMAKE_BUILD_TYPE=Release \
+		-D CMAKE_INSTALL_PREFIX=/usr \
+		-B build
+	make protocols
+	make -C build all
+}
+
+do_install() {
+	cd ${wrksrc}
+	vbin build/hyprpaper
+	vlicense LICENSE
+}
