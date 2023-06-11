@@ -57,41 +57,54 @@ changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
 checksum=096e478f9f8f4b16bd3d3313f970e216d4ca0d280f6cfddf35126ff8f4350497
 
-#do_fetch() {
-#	git clone --recursive https://github.com/hyprwm/Hyprland ${wrksrc}
-#}
-
 do_build() {
 	cd ${wrksrc}
-#	git submodule update --init
+	
+	# build hyprland-specific wlroots
 	make fixwlr
-	cd "./subprojects/wlroots/" && meson build/ --prefix="${wrksrc}/../tmpwlr" --buildtype=release && ninja -C build/ && mkdir -p "${wrksrc}/../tmpwlr" && ninja -C build/ install && cd ../
-	cd udis86 && cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -H./ -B./build -G Ninja && cmake --build ./build --config Release --target all -j${XBPS_MAKEJOBS} && cd ../..
+	cd subprojects/wlroots &&
+		meson build/ --prefix="${wrksrc}/tmpwlr" --buildtype=release &&
+		ninja -C build/ &&
+		mkdir -p "${wrksrc}/tmpwlr" &&
+		ninja -C build/ install &&
+		cd ..
+
+	# build udis86
+	cd udis86 &&
+		cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -H./ -B./build -G Ninja &&
+		cmake --build ./build --config Release --target all -j${XBPS_MAKEJOBS} &&
+		cd ../..
+
+	# build hyprland
 	make protocols
 	make release
-	cd ./hyprctl && make all && cd ..
+	cd hyprctl &&
+		make all &&
+		cd ..
 }
 
 do_install() {
 	cd ${wrksrc}
 	
+	vlicense LICENSE
+	
 	vmkdir usr/share/wayland-sessions
 	vmkdir usr/share/hyprland
 	
+	# binaries
 	vbin build/Hyprland
 	vbin hyprctl/hyprctl
 	
+	# assets
 	vinstall assets/header.svg 644 usr/share/hyprland
 	vinstall assets/hyprland.png 644 usr/share/hyprland
 	vinstall assets/wall_2K.png 644 usr/share/hyprland
 	vinstall assets/wall_4K.png 644 usr/share/hyprland
 	vinstall assets/wall_8K.png 644 usr/share/hyprland
-
 	vinstall example/hyprland.desktop 644 usr/share/wayland-sessions
 	vinstall example/hyprland.conf 644 usr/share/hyprland
 	
-	vlicense LICENSE
-	
-	vinstall ../tmpwlr/lib/libwlroots.so.12032 644 usr/lib
+	# wlroots
+	vinstall tmpwlr/lib/libwlroots.so.12032 644 usr/lib
 }
 
