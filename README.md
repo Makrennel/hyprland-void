@@ -32,8 +32,10 @@ $ ./xbps-src pkg hyprland
 $ sudo xbps-install -R hostdir/binpkgs hyprland
 ```
 
-If Hyprland updates and this repository changes, you may want to perform a hard reset of your cloned void-packages repository to ensure changes are correctly applied when repeating steps 2 through 4 after a git pull on both void-packages and hyprland-void. (BEWARE: This will also reset any changes you have made to any other packages locally - you will have to figure it out yourself in this case)
+If Hyprland updates and this repository changes, you may want to perform a hard reset of your cloned void-packages repository to ensure changes are correctly applied when repeating steps 2 and 3 after a git pull on both void-packages and hyprland-void. (BEWARE: This will also reset any changes you have made to any other packages locally - you will have to figure it out yourself in this case)
 ```
+$ sudo xbps-install -Su # Update system normally first to avoid building every package needing update from source
+
 $ cd ~/void-packages
 $ git reset --hard
 $ git pull
@@ -41,13 +43,15 @@ $ git pull
 $ cd ~/hyprland-void
 $ git pull
 
-# Repeat steps 2, 3 and 4
+# Repeat steps 2 and 3
+
+$ cd ~/void-packages
+$ ./xbps-src update-sys
 ```
 
 This repository also includes other templates which may be of interest for:
-```
-hyprpaper
-xdg-desktop-portal-hyprland
-```
+
+- hyprpaper
+- xdg-desktop-portal-hyprland
 
 There is also a template for [hyprland-nvidia](https://wiki.hyprland.org/Nvidia) which includes the [patch used in the AUR](https://aur.archlinux.org/cgit/aur.git/tree/nvidia.patch?h=hyprland-nvidia), however this is unofficial and untested, and as far as I know non-functional. Please refer to issue [#1](https://github.com/Makrennel/hyprland-void/issues/1) and try to collaborate to figure it out if this interests you.
