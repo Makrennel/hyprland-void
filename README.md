@@ -32,6 +32,12 @@ $ ./xbps-src pkg hyprland
 $ sudo xbps-install -R hostdir/binpkgs hyprland
 ```
 
+### Running
+
+In order to run Hyprland you will need to install some additional pacakges which will depend on your setup, for example a [session and seat manager](https://docs.voidlinux.org/config/session-management.html) and [graphics drivers](https://docs.voidlinux.org/config/graphical-session/graphics-drivers/index.html).
+
+### Updating
+
 If Hyprland updates and this repository changes, you may want to perform a hard reset of your cloned void-packages repository to ensure changes are correctly applied when repeating steps 2 and 3 after a git pull on both void-packages and hyprland-void. (BEWARE: This will also reset any changes you have made to any other packages locally - you will have to figure it out yourself in this case)
 ```
 $ sudo xbps-install -Su # Update system normally first to avoid building every package needing update from source
@@ -49,6 +55,7 @@ $ cd ~/void-packages
 $ ./xbps-src update-sys
 ```
 
+### Extra
 This repository also includes other templates which may be of interest for:
 
 - hyprpaper
