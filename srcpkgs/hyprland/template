@@ -1,6 +1,6 @@
 # Template file for 'hyprland'
 pkgname=hyprland
-version=0.26.0
+version=0.27.0
 revision=1
 hostmakedepends="jq git pkg-config glslang hwids meson cmake ninja autoconf mk-configure"
 makedepends="
@@ -55,7 +55,7 @@ license="BSD"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=096e478f9f8f4b16bd3d3313f970e216d4ca0d280f6cfddf35126ff8f4350497
+checksum=d3d11572ba51e4248e653e22034052ed371b8b3dac1a731d3506ebdfb41e6ccf
 
 do_build() {
 	cd ${wrksrc}
