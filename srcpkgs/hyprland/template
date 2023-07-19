@@ -24,6 +24,7 @@ makedepends="
 	libglvnd-devel
 	libliftoff
 	libdisplay-info
+	bzip2-devel
 "
 depends="
 	libxcb
