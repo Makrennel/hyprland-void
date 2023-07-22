@@ -1,7 +1,7 @@
 # Template file for 'hyprland'
 pkgname=hyprland
 version=0.27.1
-revision=1
+revision=2
 hostmakedepends="jq git pkg-config glslang hwids meson cmake ninja autoconf mk-configure"
 makedepends="
 	ffmpeg-devel
@@ -58,53 +58,57 @@ distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/sour
 checksum=69cbda21627c74bb7eb2a6ab9d967eb982152752b27e3f01ce08b0fa32d20b5b
 
 do_build() {
-	cd ${wrksrc}
-	
 	# build hyprland-specific wlroots
 	make fixwlr
-	cd subprojects/wlroots &&
-		meson build/ --prefix="${wrksrc}/tmpwlr" --buildtype=release &&
-		ninja -C build/ &&
-		mkdir -p "${wrksrc}/tmpwlr" &&
-		ninja -C build/ install &&
-		cd ..
+	pushd subprojects/wlroots
+	meson build/ --prefix="${wrksrc}/tmpwlr" --buildtype=release
+	ninja -C build/
+	mkdir -p "${wrksrc}/tmpwlr"
+	ninja -C build/ install
+	popd
 
 	# build udis86
-	cd udis86 &&
-		cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -H./ -B./build -G Ninja &&
-		cmake --build ./build --config Release --target all -j${XBPS_MAKEJOBS} &&
-		cd ../..
+	pushd subprojects/udis86
+	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -H./ -B./build -G Ninja
+	cmake --build ./build --config Release --target all -j${XBPS_MAKEJOBS}
+	popd
 
 	# build hyprland
-	make protocols
-	make release
-	cd hyprctl &&
-		make all &&
-		cd ..
+	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DNO_SYSTEMD:STRING=true -S . -B ./build -G Ninja
+	cmake --build ./build --config Release --target all -j${XBPS_MAKEJOBS}
+
+	# build hyprctl
+	pushd hyprctl
+	make all
+	popd
 }
 
 do_install() {
-	cd ${wrksrc}
-	
 	vlicense LICENSE
 	
-	vmkdir usr/share/wayland-sessions
-	vmkdir usr/share/hyprland
-	
+	# copy headers
+	vmkdir usr/include/hyprland
+	vmkdir usr/include/hyprland/wlroots
+	vmkdir usr/include/hyprland/protocols
+	find src -name '*.h*' -exec install -Dm0644 {} ${DESTDIR}/usr/include/hyprland/{} \;
+	pushd subprojects/wlroots/include
+	find . -name '*.h*' -exec install -Dm0644 {} ${DESTDIR}/usr/include/hyprland/wlroots/{} \;
+	popd
+	pushd subprojects/wlroots/build/include
+	find . -name '*.h*' -exec install -Dm0644 {} ${DESTDIR}/usr/include/hyprland/wlroots/{} \;
+	popd
+	cp protocols/*-protocol.h ${DESTDIR}/usr/include/hyprland/protocols
+
 	# binaries
 	vbin build/Hyprland
 	vbin hyprctl/hyprctl
 	
 	# assets
+	vmkdir usr/share/wayland-sessions
+	vmkdir usr/share/hyprland
+	install -Dm0644 assets/*.png ${DESTDIR}/usr/share/hyprland
 	vinstall assets/header.svg 644 usr/share/hyprland
-	vinstall assets/hyprland.png 644 usr/share/hyprland
-	vinstall assets/wall_2K.png 644 usr/share/hyprland
-	vinstall assets/wall_4K.png 644 usr/share/hyprland
-	vinstall assets/wall_8K.png 644 usr/share/hyprland
 	vinstall example/hyprland.desktop 644 usr/share/wayland-sessions
 	vinstall example/hyprland.conf 644 usr/share/hyprland
-	
-	# wlroots
-	vinstall tmpwlr/lib/libwlroots.so.12032 644 usr/lib
+	vinstall tmpwlr/lib/libwlroots.so.12032 755 usr/lib
 }
-
