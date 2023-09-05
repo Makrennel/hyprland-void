@@ -1,6 +1,6 @@
 # Template file for 'hyprland-nvidia'
 pkgname=hyprland-nvidia
-version=0.28.0
+version=0.29.1
 revision=1
 hostmakedepends="jq git pkg-config glslang hwids meson cmake ninja autoconf mk-configure"
 makedepends="
@@ -55,7 +55,7 @@ license="BSD"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=baf355cb4e301b27de59fa5fc503b7338eed1bc921fcf76b73629504a00ffefd
+checksum=5af3ba19c17466085f4458882a342090327ca400177aac3017aa8ccff34859d0
 conflicts="hyprland"
 
 do_build() {
@@ -107,10 +107,14 @@ do_install() {
 	# assets
 	vmkdir usr/share/wayland-sessions
 	vmkdir usr/share/hyprland
+	vmkdir usr/share/xdg-desktop-portal
 	install -Dm0644 assets/*.png ${DESTDIR}/usr/share/hyprland
 	vinstall assets/header.svg 644 usr/share/hyprland
+	vinstall assets/hyprland-portals.conf usr/share/xdg-desktop-portal
 	vinstall example/hyprland.desktop 644 usr/share/wayland-sessions
 	vinstall example/hyprland.conf 644 usr/share/hyprland
+
+	# wlroots
 	vinstall tmpwlr/lib/libwlroots.so.12032 755 usr/lib
 }
 
