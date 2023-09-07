@@ -109,7 +109,7 @@ do_install() {
 	vmkdir usr/share/xdg-desktop-portal
 	install -Dm0644 assets/*.png ${DESTDIR}/usr/share/hyprland
 	vinstall assets/header.svg 644 usr/share/hyprland
-	vinstall assets/hyprland-portals.conf usr/share/xdg-desktop-portal
+	vinstall assets/hyprland-portals.conf 644 usr/share/xdg-desktop-portal
 	vinstall example/hyprland.desktop 644 usr/share/wayland-sessions
 	vinstall example/hyprland.conf 644 usr/share/hyprland
 	
