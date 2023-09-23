@@ -23,7 +23,7 @@ makedepends="
 	Vulkan-Headers
 	libglvnd-devel
 	libliftoff
-	libdisplay-info
+	libdisplay-info-devel
 "
 depends="
 	libxcb
