@@ -2,30 +2,47 @@
 
 This repository contains template files for building [Hyprland](https://github.com/hyprwm/Hyprland) using xbps-src.
 
+Note: This will not be updated to Hyprland v0.30.0+ until Void Linux's GCC is updated to GCC 13. The same applies for xdg-desktop-portal-hyprland v1.0.0+.
+
 ### Usage
 
-Follow the instructions at [void-packages](https://github.com/void-linux/void-packages) to set up xbps-src for building templates.
+1) You may want to start by making a directory where you can keep the relevant repositories
 
-1) Clone this repository:
+```
+$ mkdir ~/repos
+$ cd ~/repos
+```
+
+2) Set up a [void-packages](https://github.com/void-linux/void-packages) clone for building templates files
+
+```
+$ git clone https://github.com/void-linux/void-packages
+$ cd void-packages
+$ ./xbps-src binary-bootstrap
+$ cd ..
+```
+
+3) Clone this repository:
 
 ```
 $ git clone https://github.com/Makrennel/hyprland-void.git
 $ cd hyprland-void
 ```
 
-2) Append shlibs to the end of your void-packages shlibs
+4) Append shared libraries to the end of your void-packages shared libraries
 
 ```
-$ cat common/shlibs >> ~/void-packages/common/shlibs
+$ cat common/shlibs >> ../void-packages/common/shlibs
 ```
 
-3) Copy srcpkgs to your void-packages srcpkgs directory
+5) Copy srcpkgs to your void-packages srcpkgs directory
 
 ```
-$ cp -r srcpkgs/* ~/void-packages/srcpkgs
+$ cp -r srcpkgs/* ../void-packages/srcpkgs
 ```
 
-4) Build and install packages
+6) Build and install packages
+
 ```
 $ cd ~/void-packages
 $ ./xbps-src pkg hyprland
@@ -38,29 +55,29 @@ In order to run Hyprland you will need to install some additional packages which
 
 ### Updating
 
-If Hyprland updates and this repository changes, you may want to perform a hard reset and clean of your cloned void-packages repository to ensure changes are correctly applied when repeating steps 2 and 3 after a git pull on both void-packages and hyprland-void. (BEWARE: This will also reset any changes you have made to any other packages locally - you will have to figure it out yourself in this case)
+If Hyprland updates and this repository changes, you may want to perform a hard reset and clean of your cloned void-packages repository to ensure changes are correctly applied when repeating steps 4 and 5 after a git pull on both void-packages and hyprland-void. (BEWARE: This will also reset any changes you have made to any other packages locally - you will have to figure it out yourself in this case)
+
 ```
 $ sudo xbps-install -Su # Update system normally first to avoid building every package needing update from source
 
-$ cd ~/void-packages
+$ cd ~/repos/void-packages
 $ git clean -fd
 $ git reset --hard
 $ git pull
 
-$ cd ~/hyprland-void
+$ cd ../hyprland-void
 $ git pull
 
-$ cat common/shlibs >> ~/void-packages/common/shlibs # Repeat steps 2 and 3
-$ cp -r srcpkgs/* ~/void-packages/srcpkgs
+$ cat common/shlibs >> ../void-packages/common/shlibs # Repeat steps 2 and 3
+$ cp -r srcpkgs/* ../void-packages/srcpkgs
 
-$ cd ~/void-packages
+$ cd ../void-packages
 $ ./xbps-src update-sys
 ```
 
 ### Extra
 This repository also includes other templates which may be of interest for:
 
+- hyprland-nvidia (unofficial patch)
 - hyprpaper
 - xdg-desktop-portal-hyprland
-
-There is also a template for [hyprland-nvidia](https://wiki.hyprland.org/Nvidia) which includes the [patch used in the AUR](https://aur.archlinux.org/cgit/aur.git/tree/nvidia.patch?h=hyprland-nvidia), however this is unofficial and untested, and as far as I know non-functional. Please refer to [issue #1](https://github.com/Makrennel/hyprland-void/issues/1) and try to collaborate to figure it out if this interests you.
