@@ -1,7 +1,7 @@
 # Template file for 'hyprland-nvidia'
 pkgname=hyprland-nvidia
 version=0.29.1
-revision=1
+revision=2
 hostmakedepends="jq git pkg-config glslang hwids meson cmake ninja autoconf mk-configure"
 makedepends="
 	ffmpeg-devel
