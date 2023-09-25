@@ -24,7 +24,6 @@ makedepends="
 	libglvnd-devel
 	libliftoff
 	libdisplay-info-devel
-	libexecinfo-devel
 "
 depends="
 	libxcb
@@ -49,7 +48,6 @@ depends="
 	xorg-server-xwayland
 	libliftoff
 	libdisplay-info
-	libexecinfo
 "
 short_desc="Dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 maintainer="Makrennel <makrommel@protonmail.ch>"
@@ -58,6 +56,11 @@ homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
 checksum=5af3ba19c17466085f4458882a342090327ca400177aac3017aa8ccff34859d0
+
+if [ "$XBPS_TARGET_LIBC" = musl ]; then
+	makedepends+=" libexecinfo-devel"
+	depends+=" libexecinfo"
+fi
 
 do_build() {
 	# build hyprland-specific wlroots
@@ -76,7 +79,11 @@ do_build() {
 	popd
 
 	# build hyprland
-	cmake --no-warn-unused-cli -DCMAKE_CXX_FLAGS="-lexecinfo" -DCMAKE_BUILD_TYPE:STRING=Release -DNO_SYSTEMD:STRING=true -S . -B ./build -G Ninja
+	if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
+		cmake --no-warn-unused-cli -DCMAKE_CXX_FLAGS="-lexecinfo" -DCMAKE_BUILD_TYPE:STRING=Release -DNO_SYSTEMD:STRING=true -S . -B ./build -G Ninja
+	else
+		cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DNO_SYSTEMD:STRING=true -S . -B ./build -G Ninja
+	fi
 	cmake --build ./build --config Release --target all -j${XBPS_MAKEJOBS}
 
 	# build hyprctl
