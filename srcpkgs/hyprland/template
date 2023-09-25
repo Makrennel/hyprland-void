@@ -24,6 +24,7 @@ makedepends="
 	libglvnd-devel
 	libliftoff
 	libdisplay-info-devel
+	libexecinfo-devel
 "
 depends="
 	libxcb
@@ -48,6 +49,7 @@ depends="
 	xorg-server-xwayland
 	libliftoff
 	libdisplay-info
+	libexecinfo
 "
 short_desc="Dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 maintainer="Makrennel <makrommel@protonmail.ch>"
@@ -74,7 +76,7 @@ do_build() {
 	popd
 
 	# build hyprland
-	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DNO_SYSTEMD:STRING=true -S . -B ./build -G Ninja
+	cmake --no-warn-unused-cli -DCMAKE_CXX_FLAGS="-lexecinfo" -DCMAKE_BUILD_TYPE:STRING=Release -DNO_SYSTEMD:STRING=true -S . -B ./build -G Ninja
 	cmake --build ./build --config Release --target all -j${XBPS_MAKEJOBS}
 
 	# build hyprctl
