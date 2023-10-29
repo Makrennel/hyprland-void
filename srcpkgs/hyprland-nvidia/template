@@ -1,53 +1,39 @@
 # Template file for 'hyprland-nvidia'
 pkgname=hyprland-nvidia
 version=0.29.1
-revision=2
+revision=3
 hostmakedepends="jq git pkg-config glslang hwids meson cmake ninja autoconf mk-configure"
 makedepends="
-	ffmpeg-devel
-	libX11-devel
-	pango-devel
-	libdrm-devel
-	wayland-devel
-	libxkbcommon-devel
-	pixman-devel
 	cairo-devel
-	libseat-devel
-	libinput-devel
-	wayland-protocols
-	xcb-util-renderutil-devel
-	xcb-util-errors-devel
-	xcb-util-wm-devel
-	xorg-server-xwayland
-	vulkan-loader
-	Vulkan-Headers
-	libglvnd-devel
-	libliftoff
 	libdisplay-info-devel
+	libliftoff
+	pango-devel
+	wlroots-devel
+	xorg-server-xwayland
 "
 depends="
+	cairo
+	glslang
+	libdisplay-info
+	libinput
+	libliftoff
 	libxcb
+	libXfixes
+	libxkbcommon
+	pango
+	pixman
+	polkit
+	Vulkan-ValidationLayers
+	vulkan-loader
+	wayland>=1.22.0
+	wayland-protocols
 	xcb-proto
 	xcb-util
-	xcb-util-keysyms
-	libXfixes
-	pixman
-	wayland-protocols
-	cairo
-	pango
-	polkit
-	glslang
-	libinput
-	libxkbcommon
-	wayland>=1.22.0
 	xcb-util-errors
+	xcb-util-keysyms
 	xcb-util-renderutil
 	xcb-util-wm
-	vulkan-loader
-	Vulkan-ValidationLayers
 	xorg-server-xwayland
-	libliftoff
-	libdisplay-info
 "
 short_desc="Dynamic tiling Wayland compositor that doesn't sacrifice on its looks (NVIDIA patch)"
 maintainer="Makrennel <makrommel@protonmail.ch>"
@@ -57,6 +43,11 @@ changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
 checksum=5af3ba19c17466085f4458882a342090327ca400177aac3017aa8ccff34859d0
 conflicts="hyprland"
+
+if [ "$XBPS_TARGET_LIBC" = musl ]; then
+	makedepends+=" libexecinfo-devel"
+	depends+=" libexecinfo"
+fi
 
 do_build() {
 	# build hyprland-specific wlroots
@@ -75,7 +66,11 @@ do_build() {
 	popd
 
 	# build hyprland
-	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DNO_SYSTEMD:STRING=true -S . -B ./build -G Ninja
+	if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
+		cmake --no-warn-unused-cli -DCMAKE_CXX_FLAGS="-lexecinfo" -DCMAKE_BUILD_TYPE:STRING=Release -DNO_SYSTEMD:STRING=true -S . -B ./build -G Ninja
+	else
+		cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DNO_SYSTEMD:STRING=true -S . -B ./build -G Ninja
+	fi
 	cmake --build ./build --config Release --target all -j${XBPS_MAKEJOBS}
 
 	# build hyprctl
