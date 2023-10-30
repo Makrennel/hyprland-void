@@ -44,7 +44,7 @@ $ cp -r srcpkgs/* ../void-packages/srcpkgs
 6) Build and install packages
 
 ```
-$ cd ~/void-packages
+$ cd ../void-packages
 $ ./xbps-src pkg hyprland
 $ sudo xbps-install -R hostdir/binpkgs hyprland
 ```
