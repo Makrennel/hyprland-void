@@ -9,6 +9,7 @@ makedepends="
 	libjpeg-turbo-devel
 	wayland-devel
 	wayland-protocols
+	wlroots-devel
 	hyprland-protocols
 "
 short_desc="A blazing fast wallpaper utility for wlroots compositors with IPC controls"
@@ -19,7 +20,6 @@ distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
 checksum=0b01e2ea3058e279315f75bedbddc9257c3aeeebd00a781fd56be4897a5d0612
 
 do_build() {
-	cd ${wrksrc}
 	cmake \
 		--no-warn-unused-cli \
 		-G "Unix Makefiles" \
@@ -31,7 +31,6 @@ do_build() {
 }
 
 do_install() {
-	cd ${wrksrc}
 	vbin build/hyprpaper
 	vlicense LICENSE
 }
