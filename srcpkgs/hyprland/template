@@ -1,13 +1,15 @@
 # Template file for 'hyprland'
 pkgname=hyprland
-version=0.29.1
-revision=3
+version=0.34.0
+revision=1
 hostmakedepends="jq git pkg-config glslang hwids meson cmake ninja autoconf mk-configure"
 makedepends="
 	cairo-devel
 	libdisplay-info-devel
+	libdrm-devel
 	libliftoff
 	pango-devel
+	tomlplusplus
 	wlroots-devel
 	xorg-server-xwayland
 "
@@ -23,6 +25,7 @@ depends="
 	pango
 	pixman
 	polkit
+	tomlplusplus
 	Vulkan-ValidationLayers
 	vulkan-loader
 	wayland>=1.22.0
@@ -41,7 +44,7 @@ license="BSD"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=5af3ba19c17466085f4458882a342090327ca400177aac3017aa8ccff34859d0
+checksum=234500dc726ec6cd190d95d45cf6d04766064172e75c1351ee7c49ec3405497e
 
 if [ "$XBPS_TARGET_LIBC" = musl ]; then
 	makedepends+=" libexecinfo-devel"
@@ -49,55 +52,31 @@ if [ "$XBPS_TARGET_LIBC" = musl ]; then
 fi
 
 do_build() {
-	# build hyprland-specific wlroots
-	make fixwlr
-	pushd subprojects/wlroots
-	meson build/ --prefix="${wrksrc}/tmpwlr" --buildtype=release
-	ninja -C build/
-	mkdir -p "${wrksrc}/tmpwlr"
-	ninja -C build/ install
-	popd
-
-	# build udis86
-	pushd subprojects/udis86
-	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -H./ -B./build -G Ninja
-	cmake --build ./build --config Release --target all -j${XBPS_MAKEJOBS}
-	popd
-
 	# build hyprland
 	if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
-		cmake --no-warn-unused-cli -DCMAKE_CXX_FLAGS="-lexecinfo" -DCMAKE_BUILD_TYPE:STRING=Release -DNO_SYSTEMD:STRING=true -S . -B ./build -G Ninja
+		cmake --no-warn-unused-cli \
+			-DCMAKE_CXX_FLAGS="-lexecinfo" \
+			-DCMAKE_BUILD_TYPE:STRING=Release \
+			-DNO_SYSTEMD:STRING=true \
+			-S . -B ./build -G Ninja
 	else
-		cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DNO_SYSTEMD:STRING=true -S . -B ./build -G Ninja
+		cmake --no-warn-unused-cli \
+			-DCMAKE_BUILD_TYPE:STRING=Release \
+			-DNO_SYSTEMD:STRING=true \
+			-S . -B ./build -G Ninja
 	fi
 	cmake --build ./build --config Release --target all -j${XBPS_MAKEJOBS}
-
-	# build hyprctl
-	pushd hyprctl
-	make all
-	popd
+	chmod -R 777 ./build
 }
 
 do_install() {
 	vlicense LICENSE
-	
-	# copy headers
-	vmkdir usr/include/hyprland
-	vmkdir usr/include/hyprland/wlroots
-	vmkdir usr/include/hyprland/protocols
-	find src -name '*.h*' -exec install -Dm0644 {} ${DESTDIR}/usr/include/hyprland/{} \;
-	pushd subprojects/wlroots/include
-	find . -name '*.h*' -exec install -Dm0644 {} ${DESTDIR}/usr/include/hyprland/wlroots/{} \;
-	popd
-	pushd subprojects/wlroots/build/include
-	find . -name '*.h*' -exec install -Dm0644 {} ${DESTDIR}/usr/include/hyprland/wlroots/{} \;
-	popd
-	cp protocols/*-protocol.h ${DESTDIR}/usr/include/hyprland/protocols
 
 	# binaries
 	vbin build/Hyprland
-	vbin hyprctl/hyprctl
-	
+	vbin build/hyprctl/hyprctl
+	vbin build/hyprpm/hyprpm
+
 	# assets
 	vmkdir usr/share/wayland-sessions
 	vmkdir usr/share/hyprland
@@ -107,7 +86,24 @@ do_install() {
 	vinstall assets/hyprland-portals.conf 644 usr/share/xdg-desktop-portal
 	vinstall example/hyprland.desktop 644 usr/share/wayland-sessions
 	vinstall example/hyprland.conf 644 usr/share/hyprland
-	
+	vman docs/Hyprland.1
+	vman docs/hyprctl.1
+
 	# wlroots
-	vinstall tmpwlr/lib/libwlroots.so.12032 755 usr/lib
+	vinstall subprojects/wlroots/build/libwlroots.so.13032 644 usr/lib
+
+	# headers
+	vmkdir usr/include/hyprland
+	vmkdir usr/include/hyprland/protocols
+	vmkdir usr/include/hyprland/wlroots
+	vmkdir usr/share/pkgconfig
+	find src -name '*.h*' -exec install -Dm0644 {} ${DESTDIR}/usr/include/hyprland/{} \;
+	pushd subprojects/wlroots/include
+	find . -name '*.h*' -exec install -Dm0644 {} ${DESTDIR}/usr/include/hyprland/wlroots/{} \;
+	popd
+	pushd subprojects/wlroots/build/include
+	find . -name '*.h*' -exec install -Dm0644 {} ${DESTDIR}/usr/include/hyprland/wlroots/{} \;
+	popd
+	vinstall build/hyprland.pc 644 usr/share/pkgconfig
+	install -Dm0644 protocols/*-protocol.h ${DESTDIR}/usr/include/hyprland/protocols
 }
