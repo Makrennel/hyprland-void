@@ -1,7 +1,7 @@
 # Template file for 'hyprland-nvidia'
 pkgname=hyprland-nvidia
-version=0.29.1
-revision=3
+version=0.34.0
+revision=1
 hostmakedepends="jq git pkg-config glslang hwids meson cmake ninja autoconf mk-configure"
 makedepends="
 	cairo-devel
@@ -41,7 +41,7 @@ license="BSD"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=5af3ba19c17466085f4458882a342090327ca400177aac3017aa8ccff34859d0
+checksum=234500dc726ec6cd190d95d45cf6d04766064172e75c1351ee7c49ec3405497e
 conflicts="hyprland"
 
 if [ "$XBPS_TARGET_LIBC" = musl ]; then

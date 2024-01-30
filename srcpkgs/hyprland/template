@@ -1,8 +1,8 @@
 # Template file for 'hyprland'
 pkgname=hyprland
-version=0.29.1
-revision=3
-hostmakedepends="jq git pkg-config glslang hwids meson cmake ninja autoconf mk-configure"
+version=0.34.0
+revision=1
+hostmakedepends="jq git pkg-config glslang hwids meson cmake ninja autoconf mk-configure tomlplusplus"
 makedepends="
 	cairo-devel
 	libdisplay-info-devel
@@ -41,7 +41,7 @@ license="BSD"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=5af3ba19c17466085f4458882a342090327ca400177aac3017aa8ccff34859d0
+checksum=234500dc726ec6cd190d95d45cf6d04766064172e75c1351ee7c49ec3405497e
 
 if [ "$XBPS_TARGET_LIBC" = musl ]; then
 	makedepends+=" libexecinfo-devel"
@@ -49,15 +49,6 @@ if [ "$XBPS_TARGET_LIBC" = musl ]; then
 fi
 
 do_build() {
-	# build hyprland-specific wlroots
-	make fixwlr
-	pushd subprojects/wlroots
-	meson build/ --prefix="${wrksrc}/tmpwlr" --buildtype=release
-	ninja -C build/
-	mkdir -p "${wrksrc}/tmpwlr"
-	ninja -C build/ install
-	popd
-
 	# build udis86
 	pushd subprojects/udis86
 	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -H./ -B./build -G Ninja
@@ -106,8 +97,8 @@ do_install() {
 	vinstall assets/header.svg 644 usr/share/hyprland
 	vinstall assets/hyprland-portals.conf 644 usr/share/xdg-desktop-portal
 	vinstall example/hyprland.desktop 644 usr/share/wayland-sessions
-	vinstall example/hyprland.conf 644 usr/share/hyprland
-	
+	vinstall example/hyprland.conf 644 usr/share/hyprland	
+
 	# wlroots
-	vinstall tmpwlr/lib/libwlroots.so.12032 755 usr/lib
+	vinstall subprojects/wlroots/build/libwlroots.so.13032 755 usr/lib
 }
