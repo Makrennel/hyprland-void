@@ -2,7 +2,7 @@
 pkgname=hyprland
 version=0.34.0
 revision=1
-hostmakedepends="jq git pkg-config glslang hwids meson cmake ninja autoconf mk-configure tomlplusplus"
+hostmakedepends="jq git pkg-config glslang hwids meson cmake ninja autoconf mk-configure"
 makedepends="
 	cairo-devel
 	libdisplay-info-devel
@@ -85,7 +85,6 @@ do_install() {
 	vinstall assets/header.svg 644 usr/share/hyprland
 	vinstall assets/hyprland-portals.conf 644 usr/share/xdg-desktop-portal
 	vinstall example/hyprland.desktop 644 usr/share/wayland-sessions
-  
 	vinstall example/hyprland.conf 644 usr/share/hyprland
 	vman docs/Hyprland.1
 	vman docs/hyprctl.1
