@@ -11,6 +11,9 @@ makedepends="
 	wayland-protocols
 	wlroots-devel
 	hyprland-protocols
+	hyprlang
+	libwebp-devel
+	file-devel
 "
 short_desc="A blazing fast wallpaper utility for wlroots compositors with IPC controls"
 maintainer="Makrennel <makrommel@protonmail.ch>"
