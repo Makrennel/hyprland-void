@@ -2,6 +2,9 @@
 pkgname=hyprland-nvidia
 version=0.34.0
 revision=1
+build_style=meta
+depends="hyprland"
+short_desc="Dynamic tiling Wayland compositor that d... (transitional dummy package)"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD"
 homepage="https://hyprland.org/"
