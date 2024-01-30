@@ -1,21 +1,20 @@
 # Template file for 'xdg-desktop-portal-hyprland'
 pkgname=xdg-desktop-portal-hyprland
-version=0.5.0
+version=1.3.1
 revision=1
-build_style=meson
+build_style=cmake
 hostmakedepends="
 	pkg-config
 	wayland-devel
 	scdoc
 	cmake
+	git
 "
 makedepends="
 	wayland-devel
 	wayland-protocols
 	hyprland-protocols
 	pipewire-devel
-	inih-devel
-	libuuid-devel
 	libgbm-devel
 	libdrm-devel
 	elogind-devel
@@ -23,25 +22,15 @@ makedepends="
 "
 depends="
 	xdg-desktop-portal
+	pipewire
 	qt6-base
 	qt6-wayland
-	pipewire
-	inih
-	libuuid
+	hyprlang
+	sdbus-cpp
 "
 short_desc="Backend of xdg-desktop-portal for Hyprland"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="MIT"
 homepage="https://github.com/hyprwm/${pkgname}"
 distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
-checksum=d346cbe170e7042d5e364242a715d021d9b8da2078a169771cf84cda13f24e76
-
-post_build() {
-	make -C hyprland-share-picker all
-}
-
-post_install() {
-	vbin hyprland-share-picker/build/hyprland-share-picker
-
-	vlicense LICENSE
-}
+checksum="60b390f326b84cc52657b735e3d7ba8f03aa3363672100dba47580984491611f"
