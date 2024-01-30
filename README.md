@@ -76,7 +76,6 @@ cd ../void-packages
 ### Extra
 This repository also includes other templates which may be of interest for:
 
-- hyprland-nvidia (unofficial patch)
 - hyprpaper
 - xdg-desktop-portal-hyprland
 
