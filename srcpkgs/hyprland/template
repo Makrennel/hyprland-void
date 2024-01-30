@@ -22,6 +22,7 @@ depends="
 	libxcb
 	libXfixes
 	libxkbcommon
+	libdrm
 	pango
 	pixman
 	polkit
