@@ -51,6 +51,9 @@ sudo xbps-install -R hostdir/binpkgs hyprland
 
 In order to run Hyprland you will need to install some additional packages which will depend on your setup, for example a [session and seat manager](https://docs.voidlinux.org/config/session-management.html) and [graphics drivers](https://docs.voidlinux.org/config/graphical-session/graphics-drivers/index.html).
 
+#### Note
+The `hyprland-nvidia` package is now just a dummy package with the normal `hyprland` package as a dependency, as patches were made redundant in [version 0.33.0](https://github.com/hyprwm/Hyprland/releases/tag/v0.33.0). However, Nvidia support is still unofficial; refer to the [manual](https://wiki.hyprland.org/hyprland-wiki/pages/Nvidia/), and bear this in mind.
+
 ### Updating
 
 If Hyprland updates and this repository changes, you may want to perform a hard reset and clean of your cloned void-packages repository to ensure changes are correctly applied when repeating steps 4 and 5 after a git pull on both void-packages and hyprland-void. (BEWARE: This will also reset any changes you have made to any other packages locally - you will have to figure it out yourself in this case)
