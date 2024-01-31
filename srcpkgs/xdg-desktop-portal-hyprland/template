@@ -33,6 +33,10 @@ depends="
 short_desc="Backend of xdg-desktop-portal for Hyprland"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="MIT"
-homepage="https://github.com/hyprwm/${pkgname}"
+homepage="https://github.com/hyprwm/xdg-desktop-portal-hyprland"
 distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
 checksum="60b390f326b84cc52657b735e3d7ba8f03aa3363672100dba47580984491611f"
+
+post_install() {
+	vlicense LICENSE
+}

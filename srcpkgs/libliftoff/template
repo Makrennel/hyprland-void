@@ -8,7 +8,7 @@ depends="libdrm"
 short_desc="Lightweight KMS plane library"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="MIT"
-homepage="https://gitlab.freedesktop.org/emersion/${pkgname}"
+homepage="https://gitlab.freedesktop.org/emersion/libliftoff"
 distfiles="https://gitlab.freedesktop.org/emersion/${pkgname}/-/archive/v${version}/${pkgname}-v${version}.tar.gz"
 checksum=44ec5cfdd0df040d1023d4d6a48b23c31f21ce61ee2347da9e1ca244fe24dd1c
 

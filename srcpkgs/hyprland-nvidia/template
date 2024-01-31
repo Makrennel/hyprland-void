@@ -4,8 +4,12 @@ version=0.34.0
 revision=1
 build_style=meta
 depends="hyprland"
-short_desc="Dynamic tiling Wayland compositor that d... (transitional dummy package)"
+short_desc="Dynamic tiling Wayland compositor (transitional dummy package)"
 maintainer="Makrennel <makrommel@protonmail.ch>"
-license="BSD"
+license="BSD-3-Clause"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
+
+post_install() {
+	vlicense LICENSE
+}
