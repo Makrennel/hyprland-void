@@ -86,7 +86,7 @@ rm -r void-packages
 # make a fresh clone of void-packages
 git clone https://github.com/void-linux/void-packages
 cd void-packages
-./xbps-src binary bootstrap
+./xbps-src binary-bootstrap
 
 # update hyprland-void and copy hyprland-void stuff again
 cd ../hyprland-void
