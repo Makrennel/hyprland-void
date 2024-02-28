@@ -1,0 +1,17 @@
+# Template file for 'hyprlock'
+pkgname=hyprlock
+version=0.1.0
+revision=1
+build_style=cmake
+hostmakedepends="pkg-config cmake"
+makedepends="pango-devel cairo-devel
+        hyprlang wayland-protocols wayland-devel
+        libdrm-devel libxkbcommon-devel pam-devel MesaLib-devel"
+depends=""
+short_desc="Hyprland's simple, yet multi-threaded and GPU-accelerated screen locking utility."
+maintainer="Makrennel <makrommel@protonmail.ch>"
+license="BSD"
+homepage="https://github.com/hyprwm/hyprlock"
+distfiles="https://github.com/hyprwm/hyprlock/archive/refs/tags/v${version}.tar.gz"
+checksum=5d0e6547ac073c78e95d4f086a258e1e5713168827c38ccb2466f2c4d96bd1df
+
