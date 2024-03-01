@@ -105,6 +105,7 @@ This repository also includes other templates which may be of interest for:
 
 - hyprpaper
 - hypridle
+- hyprlock
 - xdg-desktop-portal-hyprland
 
 You may also be interested in [EWW](https://github.com/elkowar/eww), for which a template is available in a [separate repository](https://github.com/Makrennel/eww-void) as it is not specific to Hyprland.
