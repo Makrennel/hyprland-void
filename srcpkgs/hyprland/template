@@ -1,7 +1,7 @@
 # Template file for 'hyprland'
 pkgname=hyprland
-version=0.35.0
-revision=3
+version=0.36.0
+revision=1
 hostmakedepends="
 	cmake
 	cpio
@@ -15,6 +15,7 @@ hostmakedepends="
 "
 makedepends="
 	cairo-devel
+	hyprlang
 	libdisplay-info-devel
 	libdrm-devel
 	libgbm-devel
@@ -39,7 +40,7 @@ license="BSD-3-Clause"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=de53d764606131c8aacc209f8a3ad6e619fdcddd16a7cdf4d8ca343816bb8c1b
+checksum=8e44c379794663accf928458b5e363ed248d56fc5f267e6b3759146fdf1229bb
 
 if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
 	makedepends+=" libexecinfo-devel"
