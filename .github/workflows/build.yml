@@ -1,0 +1,132 @@
+name: "Build Hyprland"
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build Hyprland
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/void-linux/void-buildroot-${{ matrix.config.libc }}:20231230R1
+      options: --platform ${{ matrix.config.platform }}
+      env:
+        PATH: "/usr/libexec/chroot-git:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/bin:/tmp/bin"
+        ARCH: "${{ matrix.config.arch }}"
+        BOOTSTRAP: "${{ matrix.config.host }}"
+        TEST: "${{ matrix.config.test }}"
+        HOSTREPO: /hostrepo
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              arch: x86_64,
+              host: x86_64,
+              libc: glibc,
+              platform: linux/amd64,
+              test: 1,
+            }
+
+    steps:
+      - name: Prepare container
+        run: |
+          mkdir -p /etc/xbps.d && cp /usr/share/xbps.d/*-repository-*.conf /etc/xbps.d/
+          ls -la
+          sed -i 's|repo-default|repo-ci|g' /etc/xbps.d/*-repository-*.conf
+          xbps-install -Syu || xbps-install -yu xbps
+          xbps-install -yu
+          xbps-install -y tar
+
+      - name: Make pkgs directory
+        run: |
+          cd $HOME
+          mkdir pkgs || cd pkgs
+
+      - name: Clone Void-Packages and prepare
+        run: |
+          git clone --depth 1 https://github.com/void-linux/void-packages.git
+          ls -la
+
+      - name: Clone Hyprland-Void repo and prepare
+        run: |
+          git clone --depth 1 https://github.com/Makrennel/hyprland-void.git
+          cd hyprland-void
+          cat common/shlibs >> ../void-packages/common/shlibs
+          cp -r srcpkgs/* ../void-packages/srcpkgs
+          cd ..
+
+      - name: Create hostrepo and prepare masterdir
+        run: |
+          cd void-packages
+          ln -s "$(pwd)" /hostrepo &&
+          common/travis/set_mirror.sh &&
+          common/travis/prepare.sh &&
+          common/travis/fetch-xtools.sh
+
+      - name: Build hyprland
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland
+          )
+
+      - name: Build hyprland-protocols
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland-protocols
+          )
+
+      - name: Build xdg-desktop-portal-hyprland
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg xdg-desktop-portal-hyprland
+          )
+
+      - name: Check Packages
+        run: |
+          cd ~/hostdir/binpkgs
+          tar -czvf hyprland.tar.gz *
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hyprland-void
+          path: ~/hostdir/binpkgs
+
+  publish:
+    name: Pack and Publish
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: hyprland-void
+          path: ./
+
+      - name: Get current date
+        run: echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Hyprland Release-${{ env.CURRENT_DATE }}
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./hyprland.tar.gz
+          asset_name: hyprland-${{ env.CURRENT_DATE }}.tar.gz
+          asset_content_type: application/gzip
