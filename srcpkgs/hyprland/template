@@ -1,6 +1,6 @@
 # Template file for 'hyprland'
 pkgname=hyprland
-version=0.36.0
+version=0.37.0
 revision=1
 hostmakedepends="
 	cmake
@@ -15,6 +15,7 @@ hostmakedepends="
 "
 makedepends="
 	cairo-devel
+	hyprcursor
 	hyprlang
 	libdisplay-info-devel
 	libdrm-devel
@@ -40,7 +41,7 @@ license="BSD-3-Clause"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=8e44c379794663accf928458b5e363ed248d56fc5f267e6b3759146fdf1229bb
+checksum=dcad61786f00f3c61d8df4eeccaea803f52a95bf74ac1b419acc16cc883bc74c
 
 if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
 	makedepends+=" libexecinfo-devel"
@@ -79,13 +80,13 @@ do_install() {
 	vmkdir usr/share/wayland-sessions
 	vmkdir usr/share/hyprland
 	vmkdir usr/share/xdg-desktop-portal
-	
+
 	install -Dm0644 assets/*.png ${DESTDIR}/usr/share/hyprland
 	vinstall assets/header.svg 644 usr/share/hyprland
 	vinstall assets/hyprland-portals.conf 644 usr/share/xdg-desktop-portal
 	vinstall example/hyprland.desktop 644 usr/share/wayland-sessions
 	vinstall example/hyprland.conf 644 usr/share/hyprland
-	
+
 	vman docs/Hyprland.1
 	vman docs/hyprctl.1
 
@@ -103,11 +104,11 @@ do_install() {
 	pushd subprojects/wlroots/include
 	find . -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland/wlroots
 	popd
-	
+
 	pushd subprojects/wlroots/build/include
 	find . -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland/wlroots
 	popd
-	
+
 	vinstall build/hyprland.pc 644 usr/share/pkgconfig
 	install -Dm0644 protocols/*-protocol.h ${DESTDIR}/usr/include/hyprland/protocols
 
@@ -127,4 +128,3 @@ hyprland-nvidia_package() {
 	short_desc="Dynamic tiling Wayland compositor - transitional dummy package"
 	build_style=meta
 }
-
