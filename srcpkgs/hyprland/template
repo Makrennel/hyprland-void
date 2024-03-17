@@ -1,6 +1,6 @@
 # Template file for 'hyprland'
 pkgname=hyprland
-version=0.36.0
+version=0.37.1
 revision=1
 hostmakedepends="
 	cmake
@@ -40,7 +40,7 @@ license="BSD-3-Clause"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=8e44c379794663accf928458b5e363ed248d56fc5f267e6b3759146fdf1229bb
+checksum=c109451f9ad1d61ea6420395b905b843ba0cbd5f8e0edce283c1fc47d40f5b3e
 
 if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
 	makedepends+=" libexecinfo-devel"
