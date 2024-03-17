@@ -40,7 +40,7 @@ license="BSD-3-Clause"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=c109451f9ad1d61ea6420395b905b843ba0cbd5f8e0edce283c1fc47d40f5b3e
+checksum=bf3c33f7643218af3c44411c28e9a20fcd02225e56d732a8a4a446d9a298f862
 
 if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
 	makedepends+=" libexecinfo-devel"
