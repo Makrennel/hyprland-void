@@ -15,6 +15,7 @@ hostmakedepends="
 "
 makedepends="
 	cairo-devel
+	hyprcursor
 	hyprlang
 	libdisplay-info-devel
 	libdrm-devel
@@ -79,13 +80,13 @@ do_install() {
 	vmkdir usr/share/wayland-sessions
 	vmkdir usr/share/hyprland
 	vmkdir usr/share/xdg-desktop-portal
-	
+
 	install -Dm0644 assets/*.png ${DESTDIR}/usr/share/hyprland
 	vinstall assets/header.svg 644 usr/share/hyprland
 	vinstall assets/hyprland-portals.conf 644 usr/share/xdg-desktop-portal
 	vinstall example/hyprland.desktop 644 usr/share/wayland-sessions
 	vinstall example/hyprland.conf 644 usr/share/hyprland
-	
+
 	vman docs/Hyprland.1
 	vman docs/hyprctl.1
 
@@ -103,11 +104,11 @@ do_install() {
 	pushd subprojects/wlroots/include
 	find . -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland/wlroots
 	popd
-	
+
 	pushd subprojects/wlroots/build/include
 	find . -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland/wlroots
 	popd
-	
+
 	vinstall build/hyprland.pc 644 usr/share/pkgconfig
 	install -Dm0644 protocols/*-protocol.h ${DESTDIR}/usr/include/hyprland/protocols
 
@@ -127,4 +128,3 @@ hyprland-nvidia_package() {
 	short_desc="Dynamic tiling Wayland compositor - transitional dummy package"
 	build_style=meta
 }
-
