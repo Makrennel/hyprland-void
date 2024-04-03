@@ -1,6 +1,6 @@
 # Template file for 'hyprland'
 pkgname=hyprland
-version=0.37.1
+version=0.38.0
 revision=1
 hostmakedepends="
 	cmake
@@ -41,7 +41,7 @@ license="BSD-3-Clause"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=bf3c33f7643218af3c44411c28e9a20fcd02225e56d732a8a4a446d9a298f862
+checksum=6e0235ad21ecff471381a50474852bfa0d1ed19bcf71504db5afe658bc305f08
 
 if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
 	makedepends+=" libexecinfo-devel"
@@ -121,10 +121,4 @@ hyprland-devel_package() {
 		vmove usr/include
 		vmove usr/share/pkgconfig
 	}
-}
-
-hyprland-nvidia_package() {
-	depends="${sourcepkg}>=${version}_${revision}"
-	short_desc="Dynamic tiling Wayland compositor - transitional dummy package"
-	build_style=meta
 }
