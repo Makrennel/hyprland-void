@@ -42,10 +42,11 @@ jobs:
           xbps-install -Syu
           xbps-install -y tar
 
-      - name: Make pkgs directory
+      - name: Make void pkgs directory
         run: |
           cd $HOME
-          mkdir pkgs  cd pkgs
+          mkdir void-pkgs
+          cd void-pkgs
 
       - name: Clone Void-Packages and prepare
         run: |
