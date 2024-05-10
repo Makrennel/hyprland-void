@@ -11,6 +11,7 @@ configure_args=" --no-warn-unused-cli \
 hstmkdeps="
 	cmake
 	cpio
+	git
 	glslang
 	hyprwayland-scanner
 	jq
