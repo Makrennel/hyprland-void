@@ -1,27 +1,28 @@
 # Template file for 'hyprland'
 pkgname=hyprland
-version=0.39.1
+version=0.40.0
 revision=1
 build_style=cmake
 configure_args=" --no-warn-unused-cli \
-      -DCMAKE_BUILD_TYPE:STRING=Release \
-      -DNO_SYSTEMD:STRING=true \
-      -G Ninja
+	-DCMAKE_BUILD_TYPE:STRING=Release \
+	-DNO_SYSTEMD:STRING=true \
+	-G Ninja
 "
 hstmkdeps="
 	cmake
 	cpio
 	glslang
-	hwids
+	hyprwayland-scanner
 	jq
 	meson
 	ninja
-	pkg-config
+	pkgconf
 	wayland-devel
 "
 hostmakedepends=$hstmkdeps
 makedepends="
 	cairo-devel
+	hwids
 	hyprcursor
 	hyprlang
 	libdisplay-info-devel
@@ -48,12 +49,12 @@ license="BSD-3-Clause"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=48d1c58fd8db365635a56d76e05e6ea2d99fa20c020a061ee88a20407cfde787
+checksum=0995fe7924a60e3d81428b3fa03ab15d8065958d6285443225afbafa31d29038
 
 if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
-      configure_args+=" -DCMAKE_CXX_FLAGS=\"-lexecinfo\""
-	makedepends+=" libexecinfo-devel hwids"
-	depends+=" libexecinfo hwids"
+	configure_args+=" -DCMAKE_CXX_FLAGS=\"-lexecinfo\""
+	makedepends+=" libexecinfo-devel"
+	depends+=" libexecinfo"
 fi
 
 do_install() {
