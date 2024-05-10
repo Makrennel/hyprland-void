@@ -10,7 +10,7 @@ maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"
 homepage="https://github.com/hyprwm/hyprwayland-scanner"
 distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
-checksum=8cc971de66fd24ccaa368cc0677c34ab53850be486ba33312b8e395f8056747d
+checksum=7d8df3b96f9101eb6a301c3f29447001cafd9e6021b17daf94f014c0856808ac
 
 post_install() {
 	vlicense LICENSE
