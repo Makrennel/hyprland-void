@@ -11,9 +11,11 @@ configure_args=" --no-warn-unused-cli \
 hstmkdeps="
 	cmake
 	cpio
+	gcc
 	glslang
 	hyprwayland-scanner
 	jq
+	make
 	meson
 	ninja
 	pkgconf
