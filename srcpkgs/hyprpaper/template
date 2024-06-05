@@ -1,6 +1,6 @@
 # Template file for 'hyprpaper'
 pkgname=hyprpaper
-version=0.6.0
+version=0.7.0
 revision=1
 hostmakedepends="pkg-config cmake wayland-devel"
 makedepends="
@@ -20,7 +20,7 @@ maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"
 homepage="https://github.com/hyprwm/hyprpaper"
 distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
-checksum=71d8294ffbcbaae628c4eabdcb3b7fb1974d6bed7794b787bb77934d0a3f4538
+checksum=4840425013b95b49120aeb87d4d4e7d83f8956e847a537e1e6dd7f58a4b643b4
 
 do_build() {
 	cmake \
