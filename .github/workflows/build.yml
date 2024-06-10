@@ -70,7 +70,6 @@ jobs:
           common/travis/fetch-xtools.sh
 
 
-      # Hyprland Dependencies
       - name: Build tomlplusplus
         run: |
           (
@@ -96,7 +95,6 @@ jobs:
           )
 
 
-      # Hyprland
       - name: Build hyprland
         run: |
           (
@@ -104,7 +102,6 @@ jobs:
           )
 
 
-      # Hyprland Related Packages
       - name: Build sdbus-cpp
         run: |
           (
