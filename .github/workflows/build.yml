@@ -69,7 +69,6 @@ jobs:
           common/travis/prepare.sh &&
           common/travis/fetch-xtools.sh
 
-
       - name: Build tomlplusplus
         run: |
           (
@@ -82,7 +81,7 @@ jobs:
           /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlang
           )
 
-      -name: Build hyprcursor
+      - name: Build hyprcursor
         run: |
           (
           /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprcursor
@@ -94,13 +93,11 @@ jobs:
           /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprwayland-scanner
           )
 
-
       - name: Build hyprland
         run: |
           (
           /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland
           )
-
 
       - name: Build sdbus-cpp
         run: |
@@ -137,7 +134,6 @@ jobs:
           (
           /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprpaper
           )
-
 
       - name: Compress Packages
         run: |
