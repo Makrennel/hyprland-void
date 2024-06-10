@@ -69,10 +69,46 @@ jobs:
           common/travis/prepare.sh &&
           common/travis/fetch-xtools.sh
 
+
+      # Hyprland Dependencies
+      - name: Build tomlplusplus
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -h ~/hostdir pkg tomlplusplus
+          )
+
+      - name: Build hyprlang
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlang
+          )
+
+      -name: Build hyprcursor
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprcursor
+          )
+
+      - name: Build hyprwayland-scanner
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprwayland-scanner
+          )
+
+
+      # Hyprland
       - name: Build hyprland
         run: |
           (
           /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland
+          )
+
+
+      # Hyprland Related Packages
+      - name: Build sdbus-cpp
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg sdbus-cpp
           )
 
       - name: Build hyprland-protocols
@@ -87,6 +123,12 @@ jobs:
           /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg xdg-desktop-portal-hyprland
           )
 
+      - name: Build hypridle
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hypridle
+          )
+
       - name: Build hyprlock
         run: |
           (
@@ -98,6 +140,7 @@ jobs:
           (
           /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprpaper
           )
+
 
       - name: Compress Packages
         run: |
@@ -131,7 +174,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.run_number }}
-          release_name: Hyprland Release-${{ env.CURRENT_DATE }}
+          release_name: Hyprland Void ${{ env.CURRENT_DATE }}
 
       - name: Upload Release Asset
         id: upload-release-asset
