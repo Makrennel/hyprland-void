@@ -1,6 +1,6 @@
 # Template file for 'hyprwayland-scanner'
 pkgname=hyprwayland-scanner
-version=0.3.4
+version=0.3.10
 revision=1
 build_style=cmake
 hostmakedepends="pkgconf"
@@ -10,7 +10,7 @@ maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"
 homepage="https://github.com/hyprwm/hyprwayland-scanner"
 distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
-checksum=5657a57634cae68c7a82ed31de28e653058852eee4baea9beb2f69629ba4c7f1
+checksum=94e40cf712a00daf9fbab6b2210ef8640ee7dbf233e82b4d8dcd8b0e01d15252
 
 post_install() {
 	vlicense LICENSE
