@@ -1,4 +1,4 @@
-name: "Build Hyprland"
+name: "Refresh Repository"
 
 on:
   push:
@@ -40,7 +40,7 @@ jobs:
           sed -i 's|repo-default|repo-ci|g' /etc/xbps.d/*-repository-*.conf
           xbps-install -Syu xbps
           xbps-install -Syu
-          xbps-install -y tar
+          xbps-install -y tar curl
 
       - name: Make void pkgs directory
         run: |
