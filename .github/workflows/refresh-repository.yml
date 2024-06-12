@@ -145,14 +145,12 @@ jobs:
           xbps-rindex --privkey ./private.pem --sign --signedby "hyprland-void-github-action" ~/hostdir/binpkgs
           xbps-rindex --privkey ./private.pem --sign-pkg ~/hostdir/binpkgs/*.xbps
 
-      - name: Checkout hyprland-void
-        uses: actions/checkout@v4
-        with:
-          path: ~/hyprland-void
+          #     - name: Checkout hyprland-void
+          #      uses: actions/checkout@v4
 
       - name: Refresh repository
         run: |
-          cd ~/hyprland-void
+          cd ../hyprland-void
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git push origin -d repository
