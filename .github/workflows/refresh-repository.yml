@@ -145,8 +145,8 @@ jobs:
         env:
           XBPS_PASSPHRASE: ${{ secrets.PRIVATE_PEM_PASSPHRASE }}
         run: |
-          xbps-rindex --privkey ./private.pem --sign --signedby "hyprland-void-github-action" ~/repository
-          xbps-rindex --privkey ./private.pem --sign-pkg ~/repository/*.xbps
+          xbps-rindex --privkey ./private.pem --sign --signedby "hyprland-void-github-action" ~/hostdir/binpkgs
+          xbps-rindex --privkey ./private.pem --sign-pkg ~/hostdir/binpkgs/*.xbps
 
       - name: Checkout hyprland-void
         uses: actions/checkout@v4
@@ -157,7 +157,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git push origin -d repository
           git switch --orphan repository
-          cp ~/repository/* ./
+          cp ~/hostdir/binpkgs/* ./
           git add .
           git commit -m "Upload latest packages to repository"
           git push -u origin repository
