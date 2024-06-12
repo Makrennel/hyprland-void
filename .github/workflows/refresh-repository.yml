@@ -143,8 +143,9 @@ jobs:
 
       - name: Sign repository
         env:
-          XBPS_PASSPHRASE: ${{ secrets.PRIVATE_PEM_PASSPHRASE }}
+          PEM_PASSPHRASE: ${{ secrets.PRIVATE_PEM_PASSPHRASE }}
         run: |
+          export XBPS_PASSPHRASE=${{ env.PEM_PASSPHRASE }}
           xbps-rindex --privkey ~/private.pem --sign --signedby "hyprland-void-github-action" ~/hostdir/binpkgs
           xbps-rindex --privkey ~/private.pem --sign-pkg ~/hostdir/binpkgs/*.xbps
 
