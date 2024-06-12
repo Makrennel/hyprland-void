@@ -49,10 +49,10 @@ jobs:
       - name: Extract
         run: |
           mkdir hyprland-void
-          curl -L https://github.com/Makrennel/hyprland-void/actions/runs/9457220549/artifacts/1587632942 > ./hyprland-void.zip
-          unzip -d ./hyprland-void ./hyprland-void.zip
+          curl -L https://productionresultssa10.blob.core.windows.net/actions-results/7d43106e-3256-47db-9408-65c0c4571cc6/workflow-job-run-3969adc2-0854-59d3-df7e-cf8d4ea7dc93/artifacts/8fd872b8615941b6e2c03da187051790f300d4198cf9f1fd6fdc8ca534b559e3.zip?rscd=attachment%3B+filename%3D%22hyprland-void.zip%22&se=2024-06-12T02%3A16%3A25Z&sig=%2BHGxxcVbNZcBA2T3Qz7mE%2BB0hbGHGfLvc4Srfv%2FRaBs%3D&ske=2024-06-12T10%3A45%3A51Z&skoid=ca7593d4-ee42-46cd-af88-8b886a2f84eb&sks=b&skt=2024-06-11T22%3A45%3A51Z&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skv=2023-11-03&sp=r&spr=https&sr=b&st=2024-06-12T02%3A06%3A20Z&sv=2023-11-03 > ~/hyprland-void.zip
+          unzip -d ~/hyprland-void ~/hyprland-void.zip
           mkdir ~/repository
-          tar -xvf ./hyprland-void/hyprland.tar.gz -C ~/repository
+          tar -xvf ~/hyprland-void/hyprland.tar.gz -C ~/repository
 
       - name: Retrieve private key
         env:
