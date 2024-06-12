@@ -53,7 +53,7 @@ jobs:
 
       - name: Clone Hyprland-Void repo and prepare
         run: |
-          git clone --depth 1 https://github.com/Makrennel/hyprland-void.git
+          git clone https://github.com/Makrennel/hyprland-void.git
           cd hyprland-void
           cat common/shlibs >> ../void-packages/common/shlibs
           cp -r srcpkgs/* ../void-packages/srcpkgs
