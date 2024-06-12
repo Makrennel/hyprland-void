@@ -41,7 +41,7 @@ jobs:
           sed -i 's|repo-default|repo-ci|g' /etc/xbps.d/*-repository-*.conf
           xbps-install -Syu xbps
           xbps-install -Syu
-          xbps-install -y tar
+          xbps-install -y tar curl
 
       - name: Make void pkgs directory
         run: |
@@ -136,6 +136,18 @@ jobs:
           /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprpaper
           )
 
+      - name: Retrieve private key
+        run: |
+          curl -H 'Authorization: token ${{ secrets.PEM_PAT }}' \
+            -H 'Accept: application/vnd.github.v3.raw' \
+            -O -L https://api.github.com/repos/Makrennel/hyprland-void-private-pem/contents/private.pem
+
+      - name: Sign repository
+        run: |
+          export XBPS_PASSPHRASE=${{ secrets.PRIVATE_PEM_PASSPHRASE }}
+          xbps-rindex --privkey ./private.pem --sign --signedby "hyprland-void-github-action" ~/hostdir/binpkgs
+          xbps-rindex --privkey ./private.pem --sign-pkg ~/hostdir/binpkgs/*.xbps
+
       - name: Compress Packages
         run: |
           cd ~/hostdir/binpkgs
@@ -145,7 +157,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: hyprland-void
-          path: ~/hostdir/binpkgs
+          path: ~/hostdir/binpkgs/hyprland.tar.gz
 
   publish:
     name: Pack and Publish
@@ -180,3 +192,21 @@ jobs:
           asset_path: ./hyprland.tar.gz
           asset_name: hyprland-${{ env.CURRENT_DATE }}.tar.gz
           asset_content_type: application/gzip
+
+      - name: Checkout hyprland-void
+        uses: actions/checkout@v4
+
+      - name: Remove old repository branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git push origin -d repository
+
+      - name: Create new repository branch
+        run: |
+          git switch --orphan repository
+          tar -xvf $GITHUB_WORKSPACE/hyprland.tar.gz -C ./
+          git add .
+          git commit -m "Upload latest packages to repository"
+          git push origin repository
+
