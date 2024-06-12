@@ -40,30 +40,111 @@ jobs:
           xbps-install -Syu
           xbps-install -y tar curl unzip
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: hyprland-void
-          github-token: ${{ secrets.ARTIFACT_TOKEN }}
-          path: ./
-
-      - name: Extract
+      - name: Make void pkgs directory
         run: |
-          ls ./
-          mkdir ~/repository
-          tar -xvf ~/hyprland-void/hyprland.tar.gz -C ~/repository
+          cd $HOME
+          mkdir void-pkgs
+          cd void-pkgs
+
+      - name: Clone Void-Packages and prepare
+        run: |
+          git clone --depth 1 https://github.com/void-linux/void-packages.git
+          ls -la
+
+      - name: Clone Hyprland-Void repo and prepare
+        run: |
+          git clone --depth 1 https://github.com/Makrennel/hyprland-void.git
+          cd hyprland-void
+          cat common/shlibs >> ../void-packages/common/shlibs
+          cp -r srcpkgs/* ../void-packages/srcpkgs
+          cd ..
+
+      - name: Create hostrepo and prepare masterdir
+        run: |
+          cd void-packages
+          ln -s "$(pwd)" /hostrepo &&
+          common/travis/set_mirror.sh &&
+          common/travis/prepare.sh &&
+          common/travis/fetch-xtools.sh
+
+      - name: Build tomlplusplus
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -h ~/hostdir pkg tomlplusplus
+          )
+
+      - name: Build hyprlang
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlang
+          )
+
+      - name: Build hyprcursor
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprcursor
+          )
+
+      - name: Build hyprwayland-scanner
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprwayland-scanner
+          )
+
+      - name: Build hyprland
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland
+          )
+
+      - name: Build sdbus-cpp
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg sdbus-cpp
+          )
+
+      - name: Build hyprland-protocols
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland-protocols
+          )
+
+      - name: Build xdg-desktop-portal-hyprland
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg xdg-desktop-portal-hyprland
+          )
+
+      - name: Build hypridle
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hypridle
+          )
+
+      - name: Build hyprlock
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlock
+          )
+
+      - name: Build hyprpaper
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprpaper
+          )
 
       - name: Retrieve private key
         env:
-          PEM_TOKEN: ${{ secrets.PRIVATE_PEM_TOKEN }}
+          PEM_TOKEN: ${{ secrets.PEM_PAT }}
         run: |
-          curl -L https://raw.githubusercontent.com/Makrennel/hyprland-void-private-pem/master/private.pem?token=$PEM_TOKEN > ./private.pem
+          curl -H 'Authorization: token $PEM_TOKEN' \
+            -H 'Accept: application/vnd.github.v3.raw' \
+            -O -L https://api.github.com/repos/Makrennel/hyprland-void-private-pem/contents/private.pem
 
       - name: Sign repository
         env:
-          PEM_PASSPHRASE: ${{ secrets.PRIVATE_PEM_PASSPHRASE }}
+          XBPS_PASSPHRASE: ${{ secrets.PRIVATE_PEM_PASSPHRASE }}
         run: |
-          export XBPS_PASSPHRASE=${{ env.PEM_PASSPHRASE }}
           xbps-rindex --privkey ./private.pem --sign --signedby "hyprland-void-github-action" ~/repository
           xbps-rindex --privkey ./private.pem --sign-pkg ~/repository/*.xbps
 
