@@ -148,8 +148,10 @@ jobs:
           xbps-rindex --privkey ~/private.pem --sign --signedby "hyprland-void-github-action" ~/hostdir/binpkgs
           xbps-rindex --privkey ~/private.pem --sign-pkg ~/hostdir/binpkgs/*.xbps
 
-      - name: Refresh repository
+      - name: Checkout hyprland-void
         uses: actions/checkout@v4
+
+      - name: Refresh repository
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
