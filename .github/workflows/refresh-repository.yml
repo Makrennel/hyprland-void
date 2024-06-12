@@ -49,8 +49,8 @@ jobs:
       - name: Extract
         run: |
           mkdir hyprland-void
-          curl -L https://github.com/Makrennel/hyprland-void/actions/runs/9457220549/artifacts/1587632942 > ~/hyprland-void.zip
-          unzip -d ~/hyprland-void ~/hyprland-void.zip
+          curl -L https://github.com/Makrennel/hyprland-void/actions/runs/9457220549/artifacts/1587632942 > ./hyprland-void.zip
+          unzip -d ./hyprland-void ./hyprland-void.zip
           mkdir ~/repository
           tar -xvf ./hyprland-void/hyprland.tar.gz -C ~/repository
 
