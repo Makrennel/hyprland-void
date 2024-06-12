@@ -38,7 +38,7 @@ jobs:
           sed -i 's|repo-default|repo-ci|g' /etc/xbps.d/*-repository-*.conf
           xbps-install -Syu xbps
           xbps-install -Syu
-          xbps-install -y tar curl unzip
+          xbps-install -y git tar curl unzip
 
       - name: Make void pkgs directory
         run: |
