@@ -134,17 +134,14 @@ jobs:
           )
 
       - name: Retrieve private key
-        env:
-          PEM_TOKEN: ${{ secrets.PEM_PAT }}
         run: |
-          curl -H 'Authorization: token $PEM_TOKEN' \
+          curl -H 'Authorization: token ${{ secrets.PEM_PAT }}' \
             -H 'Accept: application/vnd.github.v3.raw' \
             -O -L https://api.github.com/repos/Makrennel/hyprland-void-private-pem/contents/private.pem
 
       - name: Sign repository
-        env:
-          XBPS_PASSPHRASE: ${{ secrets.PRIVATE_PEM_PASSPHRASE }}
         run: |
+          export XBPS_PASSPHRASE=${{ secrets.PRIVATE_PEM_PASSPHRASE }}
           xbps-rindex --privkey ./private.pem --sign --signedby "hyprland-void-github-action" ~/hostdir/binpkgs
           xbps-rindex --privkey ./private.pem --sign-pkg ~/hostdir/binpkgs/*.xbps
 
