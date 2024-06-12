@@ -147,9 +147,12 @@ jobs:
 
       - name: Checkout hyprland-void
         uses: actions/checkout@v4
+        with:
+          path: ~/hyprland-void
 
       - name: Refresh repository
         run: |
+          cd ~/hyprland-void
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git push origin -d repository
@@ -157,5 +160,5 @@ jobs:
           cp ~/hostdir/binpkgs/* ./
           git add .
           git commit -m "Upload latest packages to repository"
-          git push -u origin repository
+          git push origin repository
 
