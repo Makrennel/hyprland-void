@@ -168,6 +168,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: hyprland-void
+          path: ~/
 
       - name: Get current date
         run: echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
@@ -188,7 +189,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: $GITHUB_WORKSPACE/hyprland.tar.gz
+          asset_path: ~//hyprland.tar.gz
           asset_name: hyprland-${{ env.CURRENT_DATE }}.tar.gz
           asset_content_type: application/gzip
 
@@ -204,7 +205,7 @@ jobs:
       - name: Create new repository branch
         run: |
           git switch --orphan repository
-          tar -xvf $GITHUB_WORKSPACE/hyprland.tar.gz -C ./
+          tar -xvf ~/hyprland.tar.gz -C ./
           git add .
           git commit -m "Upload latest packages to repository"
           git push origin repository
