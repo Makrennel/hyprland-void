@@ -38,17 +38,19 @@ jobs:
           sed -i 's|repo-default|repo-ci|g' /etc/xbps.d/*-repository-*.conf
           xbps-install -Syu xbps
           xbps-install -Syu
-          xbps-install -y tar curl
+          xbps-install -y tar curl unzip
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: hyprland-void
-          run-id: 9457220549
-          path: ./hyprland-void/
-      
+          #- name: Download artifact
+      #uses: actions/download-artifact@v4
+        #with:
+          #name: hyprland-void
+          #path: ./hyprland-void/
+
       - name: Extract
         run: |
+          mkdir hyprland-void
+          curl -L https://github.com/Makrennel/hyprland-void/actions/runs/9457220549/artifacts/1587632942 > ~/hyprland-void.zip
+          unzip -d ~/hyprland-void ~/hyprland-void.zip
           mkdir ~/repository
           tar -xvf ./hyprland-void/hyprland.tar.gz -C ~/repository
 
