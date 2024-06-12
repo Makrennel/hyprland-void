@@ -1,5 +1,8 @@
 name: "Refresh Repository"
 
+on:
+  workflow_dispatch:
+
 jobs:
   refresh-repository:
     name: Build and Upload Packages to Repository

@@ -1,9 +1,10 @@
 name: "Build Hyprland"
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+  #  push:
+  # branches:
+  #   - master
 
 jobs:
   build:
