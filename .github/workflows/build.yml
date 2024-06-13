@@ -1,10 +1,10 @@
 name: "Build Hyprland"
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   build:
@@ -170,6 +170,9 @@ jobs:
           name: hyprland-void
           path: ~/
 
+      - run: |
+        ls -la ~/
+
       - name: Get current date
         run: echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
@@ -189,7 +192,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ~//hyprland.tar.gz
+          asset_path: ~/hyprland.tar.gz
           asset_name: hyprland-${{ env.CURRENT_DATE }}.tar.gz
           asset_content_type: application/gzip
 
