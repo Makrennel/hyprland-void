@@ -173,9 +173,9 @@ jobs:
       - name: Show home
         run: |
           ls -la ~/
-          pushd -q ~
+          pushd ~
           pwd
-          popd -q
+          popd
 
       - name: Get current date
         run: echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
