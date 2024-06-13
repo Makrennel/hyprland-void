@@ -204,7 +204,7 @@ jobs:
 
       - name: Create new repository branch
         run: |
-          git switch --orphan repository
+          git switch --orphan repository-x86_64-glibc
           tar -xvf ~/hyprland.tar.gz -C ./
           git add .
           git commit -m "Upload latest packages to repository"
