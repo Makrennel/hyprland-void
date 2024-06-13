@@ -1,39 +1,32 @@
 ## Hyprland for Void Linux
 
-This repository contains template files for building [Hyprland](https://github.com/hyprwm/Hyprland) using xbps-src.
+This repository contains template files and binaries for building or installing [Hyprland](https://github.com/hyprwm/Hyprland) on Void Linux.
 
 ### Installation
 
-The simplest way to install Hyprland on Void Linux is using the [release tarballs](https://github.com/Makrennel/hyprland-void/releases) which are built automatically in a container whenever a commit is pushed to this repository. Download the [latest release](https://github.com/Makrennel/hyprland-void/releases/latest) and untar it in a directory.
+The easiest way to install Hyprland on Void Linux is using the [repository](https://github.com/Makrennel/hyprland-void/tree/repository-x86_64-glibc) which consists of binaries built automatically using GitHub Actions whenever a new commit is pushed.
+
+You can add this repository to xbps's repositories by creating a file, `/etc/xbps.d/hyprland-void.conf` with the following text:
 
 ```
-mkdir ~/.cache/hyprland-void/
-cd ~/.cache/hyprland-void
-
-# Replace the url with the latest tarball download's url
-curl -L https://github.com/Makrennel/hyprland-void/releases/download/5/hyprland-2024-06-11.tar.gz > ./hyprland-void.tar.gz
-tar -xvf hyprland-void.tar.gz -C ./packages
+repository=https://raw.githubusercontent.com/Makrennel/hyprland-void/repository-x86_64-glibc
 ```
 
-Install packages like so:
+Then you should be able to install hyprland like you would any other program:
 
 ```
-sudo xbps-install -R ~/.cache/hyprland-void/packages hyprland
+sudo xbps-install -S hyprland
 ```
 
-When updating simply use the -u flag to update all currently installed packages:
-
-```
-sudo xbps-install -R ~/.cache/hyprland-void/packages -u
-```
+There are also [release](https://github.com/Makrennel/hyprland-void/releases) tarballs available built at the same time by CI.
 
 ### Running
 
-In order to run Hyprland you will need to install some additional packages which will depend on your setup, for example a [session and seat manager](https://docs.voidlinux.org/config/session-management.html) and [graphics drivers](https://docs.voidlinux.org/config/graphical-session/graphics-drivers/index.html).
+In order to run Hyprland you will need to install some additional packages which will depend on your setup, for example a [session and seat manager](https://docs.voidlinux.org/config/session-management.html) and [graphics drivers](https://docs.voidlinux.org/config/graphical-session/graphics-drivers/index.html). You may also have to add the user to the `_seatd` group.
 
 #### Note for Nvidia Users
 
-The `hyprland-nvidia` has been removed as it is no longer necessary as of [version 0.33.0](https://github.com/hyprwm/Hyprland/releases/tag/v0.33.0). Nvidia support is still unofficial; refer to the [manual](https://wiki.hyprland.org/hyprland-wiki/pages/Nvidia/), and bearing this in mind.
+The `hyprland-nvidia` has been removed as it is no longer necessary as of [version 0.33.0](https://github.com/hyprwm/Hyprland/releases/tag/v0.33.0). Nvidia support is still unofficial; refer to the [manual](https://wiki.hyprland.org/hyprland-wiki/pages/Nvidia/), and bear this in mind.
 
 ### Extra
 There are packages in this repository which may be of interest for:
@@ -45,6 +38,8 @@ There are packages in this repository which may be of interest for:
 
 
 ### Manually Building
+
+You may want to build these templates manually, for example if you have a specific configuration requirement that needs to be set at build time. Void-packages may sometimes have specific packages which are out of date from time to time that need to be updated beforehand in order to update Hyprland, which is why this repository is not simply forked off it. We need to copy the modifications from this repository on top of a fresh void-packages clone in order to build manually.
 
 1) You may want to start by making a directory where you can keep the relevant repositories
 
