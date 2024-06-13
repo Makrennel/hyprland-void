@@ -200,7 +200,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git push origin -d repository
+          git push origin -d repository-x86_64-glibc
 
       - name: Create new repository branch
         run: |
@@ -208,5 +208,5 @@ jobs:
           tar -xvf ~/hyprland.tar.gz -C ./
           git add .
           git commit -m "Upload latest packages to repository"
-          git push origin repository
+          git push origin repository-x86_64-glibc
 
