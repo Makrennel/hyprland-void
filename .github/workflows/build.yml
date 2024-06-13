@@ -3,7 +3,7 @@ name: "Build Hyprland"
 on:
   push:
     branches:
-      - master
+      - forward
   workflow_dispatch:
 
 jobs:
@@ -170,8 +170,9 @@ jobs:
           name: hyprland-void
           path: ~/
 
-      - run: |
-        ls -la ~/
+      - name: Show home
+        run: |
+          ls -la ~/
 
       - name: Get current date
         run: echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
