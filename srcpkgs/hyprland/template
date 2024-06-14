@@ -1,7 +1,7 @@
 # Template file for 'hyprland'
 pkgname=hyprland
 version=0.41.1
-revision=1
+revision=2
 build_style=cmake
 configure_args=" --no-warn-unused-cli \
 	-DCMAKE_BUILD_TYPE:STRING=Release \
@@ -65,30 +65,13 @@ post_install() {
 	# license
 	vlicense LICENSE
 
-	# binaries
-#	vbin build/Hyprland
-#	vbin build/hyprctl/hyprctl
-#	vbin build/hyprpm/hyprpm
-
-	# assets
-#	vmkdir usr/share/wayland-sessions
-#	vmkdir usr/share/hyprland
-#	vmkdir usr/share/xdg-desktop-portal
-
-#	install -Dm0644 assets/*.png ${DESTDIR}/usr/share/hyprland
-#	vinstall assets/header.svg 644 usr/share/hyprland
-#	vinstall assets/hyprland-portals.conf 644 usr/share/xdg-desktop-portal
-#	vinstall example/hyprland.desktop 644 usr/share/wayland-sessions
-#	vinstall example/hyprland.conf 644 usr/share/hyprland
-
-#	vman docs/Hyprland.1
-#	vman docs/hyprctl.1
-
 	# headers
 	vmkdir usr/include/hyprland
 	vmkdir usr/include/hyprland/protocols
 	vmkdir usr/include/hyprland/wlr
 	vmkdir usr/share/pkgconfig
+
+	cmake --build ./build --config Release --target generate-protocol-headers
 
 	find src -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland
 
