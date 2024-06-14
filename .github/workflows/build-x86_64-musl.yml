@@ -1,0 +1,189 @@
+name: "Build Hyprland x86_64 Musl"
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Hyprland
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/void-linux/void-buildroot-${{ matrix.config.libc }}:20231230R1
+      options: --platform ${{ matrix.config.platform }}
+      env:
+        PATH: "/usr/libexec/chroot-git:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/bin:/tmp/bin"
+        ARCH: "${{ matrix.config.arch }}"
+        BOOTSTRAP: "${{ matrix.config.host }}"
+        TEST: "${{ matrix.config.test }}"
+        HOSTREPO: /hostrepo
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              arch: x86_64,
+              host: x86_64,
+              libc: musl,
+              platform: linux/amd64,
+              test: 1,
+            }
+
+    steps:
+      - name: Prepare container
+        run: |
+          mkdir -p /etc/xbps.d && cp /usr/share/xbps.d/*-repository-*.conf /etc/xbps.d/
+          ls -la
+          sed -i 's|repo-default|repo-ci|g' /etc/xbps.d/*-repository-*.conf
+          xbps-install -Syu xbps
+          xbps-install -Syu
+          xbps-install -y tar curl
+
+      - name: Make void pkgs directory
+        run: |
+          cd $HOME
+          mkdir void-pkgs
+          cd void-pkgs
+
+      - name: Clone Void-Packages and prepare
+        run: |
+          git clone --depth 1 https://github.com/void-linux/void-packages.git
+          ls -la
+
+      - name: Clone Hyprland-Void repo and prepare
+        run: |
+          git clone --depth 1 https://github.com/Makrennel/hyprland-void.git
+          cd hyprland-void
+          cat common/shlibs >> ../void-packages/common/shlibs
+          cp -r srcpkgs/* ../void-packages/srcpkgs
+          cd ..
+
+      - name: Create hostrepo and prepare masterdir
+        run: |
+          cd void-packages
+          ln -s "$(pwd)" /hostrepo &&
+          common/travis/set_mirror.sh &&
+          common/travis/prepare.sh &&
+          common/travis/fetch-xtools.sh
+
+      - name: Build tomlplusplus
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -h ~/hostdir pkg tomlplusplus
+          )
+
+      - name: Build hyprlang
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlang
+          )
+
+      - name: Build hyprcursor
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprcursor
+          )
+
+      - name: Build hyprwayland-scanner
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprwayland-scanner
+          )
+
+      - name: Build hyprland
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland
+          )
+
+      - name: Build sdbus-cpp
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg sdbus-cpp
+          )
+
+      - name: Build hyprland-protocols
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland-protocols
+          )
+
+      - name: Build xdg-desktop-portal-hyprland
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg xdg-desktop-portal-hyprland
+          )
+
+      - name: Build hypridle
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hypridle
+          )
+
+      - name: Build hyprlock
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlock
+          )
+
+      - name: Build hyprpaper
+        run: |
+          (
+          /hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprpaper
+          )
+
+      - name: Retrieve private key
+        run: |
+          curl -H 'Authorization: token ${{ secrets.PEM_PAT }}' \
+            -H 'Accept: application/vnd.github.v3.raw' \
+            -O -L https://api.github.com/repos/Makrennel/hyprland-void-private-pem/contents/private.pem
+
+      - name: Sign repository
+        run: |
+          export XBPS_PASSPHRASE=${{ secrets.PRIVATE_PEM_PASSPHRASE }}
+          xbps-rindex --privkey ./private.pem --sign --signedby "hyprland-void-github-action" ~/hostdir/binpkgs
+          xbps-rindex --privkey ./private.pem --sign-pkg ~/hostdir/binpkgs/*.xbps
+
+      - name: Compress Packages
+        run: |
+          cd ~/hostdir/binpkgs
+          tar -czvf hyprland.tar.gz *
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hyprland-void
+          path: ~/hostdir/binpkgs/hyprland.tar.gz
+
+  publish:
+    name: Pack and Publish
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: hyprland-void
+          path: ~/
+
+      - name: Checkout hyprland-void
+        uses: actions/checkout@v4
+
+      - name: Remove old repository branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git push origin -d repository-x86_64-musl
+
+      - name: Create new repository branch
+        run: |
+          git switch --orphan repository-x86_64-musl
+          tar -xvf ~/hyprland.tar.gz -C ./
+          git add .
+          git commit -m "Upload latest packages to repository"
+          git push origin repository-x86_64-musl
+
