@@ -3,7 +3,7 @@ pkgname=hyprlock
 version=0.3.0
 revision=1
 build_style=cmake
-hostmakedepends="cmake pkg-config"
+hostmakedepends="cmake pkgconf"
 makedepends="cairo-devel hyprlang libdrm-devel libxkbcommon-devel MesaLib-devel pango-devel pam-devel wayland-devel wayland-protocols"
 short_desc="Hyprland's GPU-accelerated screen locking utility"
 maintainer="Makrennel <makrommel@protonmail.ch>"
@@ -14,7 +14,7 @@ distfiles="https://github.com/hyprwm/${pkgname}/archive/refs/tags/v${version}.ta
 checksum=5e84ac3223ea340bb3d39c22db4edefbb8364da8c3b6b3d0da1dfa45d8cc945f
 
 do_patch() {
-	patch ${wrksrc} ${wrksrc}/nix/cmake.patch
+	patch ${wrksrc}/CMakeLists.txt ${wrksrc}/nix/cmake.patch
 }
 
 post_install() {
