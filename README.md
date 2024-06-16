@@ -6,27 +6,41 @@ This repository contains template files and binaries for building or installing 
 
 The easiest way to install Hyprland on Void Linux is using the [repository](https://github.com/Makrennel/hyprland-void/tree/repository-x86_64-glibc) which consists of binaries built automatically using GitHub Actions whenever a new commit is pushed.
 
-You can add this repository to xbps's repositories by creating a file, `/etc/xbps.d/hyprland-void.conf` with the following text:
+You can add this repository to xbps's repositories by creating a file such as `/etc/xbps.d/hyprland-void.conf` with the following text:
 
 ```
 repository=https://raw.githubusercontent.com/Makrennel/hyprland-void/repository-x86_64-glibc
 ```
 
-Then you should be able to install hyprland like you would any other program:
+You should then be able to install hyprland like you would any other program:
 
 ```
 sudo xbps-install -S hyprland
 ```
 
-There are also [release](https://github.com/Makrennel/hyprland-void/releases) tarballs available built at the same time by CI.
+You can also search through all hypr related packages as you would any other (you will need to accept the repository's fingerprint first with `xbps-install -S`)
+
+```
+xbps-query -Rs hypr
+```
+
+Currently this repository provides binary packages for:
+
+- x86_64-glibc
+- x86_64-musl
+
+Change the end of the url at `/etc/xbps.d/hyprland-void.conf` as appropriate with the above options.
+
 
 ### Running
 
-In order to run Hyprland you will need to install some additional packages which will depend on your setup, for example a [session and seat manager](https://docs.voidlinux.org/config/session-management.html) and [graphics drivers](https://docs.voidlinux.org/config/graphical-session/graphics-drivers/index.html). You may also have to add the user to the `_seatd` group.
+In order to run Hyprland you will need to install some additional packages which will depend on your setup, for example a [session and seat manager](https://docs.voidlinux.org/config/session-management.html) and [graphics drivers](https://docs.voidlinux.org/config/graphical-session/graphics-drivers/index.html).
+
+You may also have to add the user to the `_seatd` group.
 
 #### Note for Nvidia Users
 
-The `hyprland-nvidia` has been removed as it is no longer necessary as of [version 0.33.0](https://github.com/hyprwm/Hyprland/releases/tag/v0.33.0). Nvidia support is still unofficial; refer to the [manual](https://wiki.hyprland.org/hyprland-wiki/pages/Nvidia/), and bear this in mind.
+The `hyprland-nvidia` has been removed as it is no longer necessary as of [version 0.33.0](https://github.com/hyprwm/Hyprland/releases/tag/v0.33.0). Nvidia support is still unofficial; refer to the [manual](https://wiki.hyprland.org/hyprland-wiki/pages/Nvidia/).
 
 ### Extra
 There are packages in this repository which may be of interest for:
