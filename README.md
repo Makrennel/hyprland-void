@@ -31,6 +31,9 @@ Currently this repository provides binary packages for:
 
 Change the end of the url at `/etc/xbps.d/hyprland-void.conf` as appropriate with the above options.
 
+### Nightly
+
+There are also binary `-nightly` packages, built automatically at 00:00 UTC directly from git if there is a new commit available. There are templates available for this as well, but you will have to manually force rebuild it every time as XBPS has no built-in means of supporting git packages and upgrading to newer versions from git packages without manually bumping the revision every time.
 
 ### Running
 

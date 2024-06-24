@@ -1,0 +1,23 @@
+# Template file for 'hypridle-nightly'
+pkgname=hypridle-nightly
+version=0.1.1
+revision=1
+build_style=cmake
+hostmakedepends="cmake git pkgconf"
+makedepends="hyprlang-nightly sdbus-cpp wayland-devel wayland-protocols"
+short_desc="Hyprland's idle daemon"
+maintainer="Makrennel <makrommel@protonmail.ch>"
+license="BSD-3-Clause"
+homepage="https://github.com/hyprwm/hypridle"
+changelog="https://github.com/hyprwm/${pkgname}/releases"
+
+conflicts="hypridle"
+
+do_fetch() {
+	git clone --depth=1 https://github.com/hyprwm/hypridle.git $wrksrc
+}
+
+post_install() {
+	vlicense LICENSE
+}
+

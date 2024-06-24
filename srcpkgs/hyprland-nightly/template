@@ -1,0 +1,103 @@
+# Template file for 'hyprland-nightly'
+pkgname=hyprland-nightly
+version=0.41.1
+revision=1
+build_style=cmake
+configure_args=" --no-warn-unused-cli \
+	-DCMAKE_BUILD_TYPE:STRING=Release \
+	-DCMAKE_INSTALL_PREFIX:PATH=/usr \
+	-DNO_SYSTEMD:STRING=true \
+	-G Ninja
+"
+hstmkdeps="
+	cmake
+	cpio
+	gcc
+	git
+	glslang
+	hyprwayland-scanner-nightly
+	jq
+	make
+	meson
+	ninja
+	pkgconf
+	wayland-devel
+"
+hostmakedepends=$hstmkdeps
+makedepends="
+	cairo-devel
+	hwids
+	hyprcursor-nightly
+	hyprlang-nightly
+	hyprutils-nightly
+	libdisplay-info-devel
+	libdrm-devel
+	libgbm-devel
+	libglvnd-devel
+	libinput-devel
+	libliftoff-devel
+	libseat-devel
+	libxcb-devel
+	libxkbcommon-devel
+	pango-devel
+	tomlplusplus
+	wayland-devel
+	wayland-protocols
+	xcb-util-errors-devel
+	xcb-util-renderutil-devel
+	xcb-util-wm-devel
+	xorg-server-xwayland
+"
+short_desc="Dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
+maintainer="Makrennel <makrommel@protonmail.ch>"
+license="BSD-3-Clause"
+homepage="https://hyprland.org/"
+changelog="https://github.com/hyprwm/Hyprland/releases"
+
+conflicts="hyprland"
+
+if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
+	configure_args+=" -DCMAKE_CXX_FLAGS=\"-lexecinfo\""
+	makedepends+=" libexecinfo-devel"
+	depends+=" libexecinfo"
+fi
+
+do_fetch() {
+	git clone --depth=1 --recurse-submodules --shallow-submodules https://github.com/hyprwm/Hyprland.git $wrksrc
+}
+
+post_install() {
+	# license
+	vlicense LICENSE
+
+	# headers
+	vmkdir usr/include/hyprland
+	vmkdir usr/include/hyprland/protocols
+	vmkdir usr/include/hyprland/wlr
+	vmkdir usr/share/pkgconfig
+
+	cmake --build ./build --config Release --target generate-protocol-headers
+
+	find src -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland
+
+	pushd subprojects/wlroots-hyprland/include/wlr
+	find . -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland/wlr
+	popd
+
+	pushd subprojects/wlroots-hyprland/build/include
+	find . -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland/wlr
+	popd
+
+	install -Dm0644 protocols/*-protocol.h ${DESTDIR}/usr/include/hyprland/protocols
+	vinstall build/hyprland.pc 644 usr/share/pkgconfig
+}
+
+hyprland-nightly-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision} ${hstmkdeps} ${makedepends}"
+	short_desc="Dynamic tiling Wayland compositor - development files"
+	conflicts="hyprland-devel"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/share/pkgconfig
+	}
+}

@@ -1,8 +1,8 @@
-# Template file for 'hyprpaper'
-pkgname=hyprpaper
+# Template file for 'hyprpaper-nightly'
+pkgname=hyprpaper-nightly
 version=0.7.0
 revision=1
-hostmakedepends="pkgconf cmake wayland-devel"
+hostmakedepends="pkgconf cmake wayland-devel git"
 makedepends="
 	pango-devel
 	cairo-devel
@@ -10,8 +10,8 @@ makedepends="
 	wayland-devel
 	wayland-protocols
 	wlroots-devel
-	hyprland-protocols
-	hyprlang
+	hyprland-protocols-nightly
+	hyprlang-nightly
 	libwebp-devel
 	file-devel
 "
@@ -19,8 +19,12 @@ short_desc="Fast wallpaper utility for wlroots compositors with IPC controls"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"
 homepage="https://github.com/hyprwm/hyprpaper"
-distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
-checksum=4840425013b95b49120aeb87d4d4e7d83f8956e847a537e1e6dd7f58a4b643b4
+
+conflicts="hyprpaper"
+
+do_fetch() {
+	git clone --depth=1 https://github.com/hyprwm/hyprpaper.git $wrksrc
+}
 
 do_build() {
 	cmake \

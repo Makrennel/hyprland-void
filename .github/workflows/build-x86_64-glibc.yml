@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/void-linux/void-buildroot-${{ matrix.config.libc }}:20231230R1
+      image: ghcr.io/void-linux/void-buildroot-${{ matrix.config.libc }}:20240526R1
       options: --platform ${{ matrix.config.platform }}
       env:
         PATH: "/usr/libexec/chroot-git:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/bin:/tmp/bin"
@@ -47,39 +47,37 @@ jobs:
           xbps-install -Syu
           xbps-install -y tar curl
 
-      - name: Make void pkgs directory
-        run: |
-          cd $HOME
-          mkdir void-pkgs
-          cd void-pkgs
-
       - name: Clone Void-Packages and prepare
         run: |
+          mkdir ~/void-pkgs
+          cd ~/void-pkgs
           git clone --depth 1 https://github.com/void-linux/void-packages.git
-          ls -la
 
       - name: Clone Hyprland-Void repo and prepare
         run: |
+          cd ~/void-pkgs
           git clone https://github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git
           cd ${{ env.REPO_NAME }}
           cat common/shlibs >> ../void-packages/common/shlibs
           cp -r srcpkgs/* ../void-packages/srcpkgs
-          cd ..
 
       - name: Create hostrepo and prepare masterdir
         run: |
-          cd void-packages
+          cd ~/void-pkgs/void-packages
           ln -s "$(pwd)" /hostrepo &&
           common/travis/set_mirror.sh &&
           common/travis/prepare.sh &&
           common/travis/fetch-xtools.sh
 
-
-      # All build steps
-      # First Hyprland's dependencies 
+      # Common Deps
       - name: Build tomlplusplus
         run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg tomlplusplus)
 
+      - name: Build sdbus-cpp
+        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg sdbus-cpp)
+
+      
+      # Normal Builds
       - name: Build hyprutils
         run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprutils)
 
@@ -92,13 +90,8 @@ jobs:
       - name: Build hyprwayland-scanner
         run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprwayland-scanner)
 
-      # Hyprland itself
       - name: Build hyprland
         run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland)
-
-      # Extra Packages
-      - name: Build sdbus-cpp
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg sdbus-cpp)
 
       - name: Build hyprland-protocols
         run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland-protocols)
@@ -115,10 +108,92 @@ jobs:
       - name: Build hyprpaper
         run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprpaper)
 
+      # Nightly Builds
+      - name: Build hyprutils-nightly
+        run: |
+          git clone --filter=tree:0 https://github.com/hyprwm/hyprutils.git
+          cd hyprutils
+          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprutils-nightly/template
+          (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprutils-nightly)
+
+      - name: Build hyprlang-nightly
+        run: |
+          git clone --filter=tree:0 https://github.com/hyprwm/hyprlang.git
+          cd hyprlang
+          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprlang-nightly/template
+          (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlang-nightly)
+
+      - name: Build hyprcursor-nightly
+        run: |
+          git clone --filter=tree:0 https://github.com/hyprwm/hyprcursor.git
+          cd hyprcursor
+          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprcursor-nightly/template
+          (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprcursor-nightly)
+
+      - name: Build hyprwayland-scanner-nightly
+        run: |
+          git clone --filter=tree:0 https://github.com/hyprwm/hyprwayland-scanner.git
+          cd hyprwayland-scanner
+          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprwayland-scanner-nightly/template
+          (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprwayland-scanner-nightly)
+
+      - name: Build hyprland-nightly
+        run: |
+          git clone --filter=tree:0 https://github.com/hyprwm/hyprland.git
+          cd hyprland
+          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprland-nightly/template
+          (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland-nightly)
+
+      - name: Build hyprland-protocols-nightly
+        run: |
+          git clone --filter=tree:0 https://github.com/hyprwm/hyprland-protocols.git
+          cd hyprland-protocols
+          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprland-protocols-nightly/template
+          (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland-protocols-nightly)
+
+      - name: Build xdg-desktop-portal-hyprland-nightly
+        run: |
+          git clone --filter=tree:0 https://github.com/hyprwm/xdg-desktop-portal-hyprland.git
+          cd xdg-desktop-portal-hyprland
+          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/xdg-desktop-portal-hyprland-nightly/template
+          (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg xdg-desktop-portal-hyprland-nightly)
+
+      - name: Build hypridle-nightly
+        run: |
+          git clone --filter=tree:0 https://github.com/hyprwm/hypridle.git
+          cd hypridle
+          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hypridle-nightly/template
+          (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hypridle-nightly)
+
+      - name: Build hyprlock-nightly
+        run: |
+          git clone --filter=tree:0 https://github.com/hyprwm/hyprlock.git
+          cd hyprlock
+          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprlock-nightly/template
+          (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlock-nightly)
+
+      - name: Build hyprpaper-nightly
+        run: |
+          git clone --filter=tree:0 https://github.com/hyprwm/hyprpaper.git
+          cd hyprpaper
+          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprpaper-nightly/template
+          (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprpaper-nightly)
+
+      # Sometimes xbps-src builds a bunch of other junk I don't want to be liable for distributing
+      - name: Copy relevant packages to new directory to be packaged
+        run: |
+          mkdir ~/packages
+          cp ~/hostdir/binpkgs/hypr*.xbps ~/packages
+          cp ~/hostdir/binpkgs/xdg-desktop-portal-hyprland*.xbps ~/packages
+          cp ~/hostdir/binpkgs/sdbus-cpp*.xbps ~/packages
+          cp ~/hostdir/binpkgs/tomlplusplus*.xbps ~/packages
+          cd ~/packages
+          xbps-rindex -a *
 
       # Retrieve the signing key from the separate private repository
       - name: Retrieve private key
         run: |
+          cd ~
           curl -H 'Authorization: token ${{ secrets.PEM_PAT }}' \
             -H 'Accept: application/vnd.github.v3.raw' \
             -O -L https://api.github.com/repos/${{ env.REPO_OWNER }}/hyprland-void-private-pem/contents/private.pem
@@ -128,19 +203,19 @@ jobs:
       - name: Sign repository
         run: |
           export XBPS_PASSPHRASE=${{ secrets.PRIVATE_PEM_PASSPHRASE }}
-          xbps-rindex --privkey ./private.pem --sign --signedby "${{ env.REPO_NAME }}-github-action" ~/hostdir/binpkgs
-          xbps-rindex --privkey ./private.pem --sign-pkg ~/hostdir/binpkgs/*.xbps
+          xbps-rindex --privkey ~/private.pem --sign --signedby "${{ env.REPO_NAME }}-github-action" ~/packages
+          xbps-rindex --privkey ~/private.pem --sign-pkg ~/packages/*.xbps
 
       - name: Compress Packages
         run: |
-          cd ~/hostdir/binpkgs
+          cd ~/packages
           tar -czvf hyprland.tar.gz *
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.REPO_NAME }}
-          path: ~/hostdir/binpkgs/hyprland.tar.gz
+          path: ~/packages/hyprland.tar.gz
 
   publish:
     name: Pack and Publish
@@ -152,29 +227,6 @@ jobs:
         with:
           name: ${{ env.REPO_NAME }}
           path: ~/
-
-      - name: Get current date
-        run: echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.run_number }}
-          release_name: Hyprland Void ${{ env.CURRENT_DATE }}
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /home/runner/hyprland.tar.gz
-          asset_name: hyprland-${{ env.CURRENT_DATE }}.tar.gz
-          asset_content_type: application/gzip
 
       - name: Checkout repository
         uses: actions/checkout@v4
