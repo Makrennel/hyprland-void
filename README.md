@@ -47,7 +47,7 @@ Note, because of how XBPS is designed, you will have to manually specify `-night
 sudo xbps-install -S hyprland-nightly-devel hyprcursor-nightly hyprlang-nightly hyprutils-nightly
 ```
 
-`-nightly` packages are not recommended - you may be better building and installing hyprland manually instead.
+These `-nightly` packages are not particularly recommended - you may be better off building and installing Hyprland manually instead.
 
 #### Note for Nvidia Users
 
