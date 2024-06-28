@@ -31,15 +31,23 @@ Currently this repository provides binary packages for:
 
 Change the end of the url at `/etc/xbps.d/hyprland-void.conf` as appropriate with the above options.
 
-### Nightly
-
-There are also binary `-nightly` packages, built automatically at 00:00 UTC directly from git if there is a new commit available. There are templates available for this as well, but you will have to manually force rebuild it every time as XBPS has no built-in means of supporting git packages and upgrading to newer versions from git packages without manually bumping the revision every time.
-
 ### Running
 
 In order to run Hyprland you will need to install some additional packages which will depend on your setup, for example a [session and seat manager](https://docs.voidlinux.org/config/session-management.html) and [graphics drivers](https://docs.voidlinux.org/config/graphical-session/graphics-drivers/index.html).
 
 You may also have to add the user to the `_seatd` group.
+
+### Nightly
+
+There are also binary `-nightly` packages, built automatically at 00:00 UTC directly from git if there is a new commit available. There are templates available for this as well, but you will have to manually force rebuild it every time as XBPS has no built-in means of supporting git packages and upgrading to newer versions from git packages without manually bumping the revision every time.
+
+Note, because of how XBPS is designed, you will have to manually specify `-nightly` dependencies to be installed as it will opt for normal dependencies otherwise:
+
+```
+sudo xbps-install -S hyprland-nightly-devel hyprcursor-nightly hyprlang-nightly hyprutils-nightly
+```
+
+`-nightly` packages are not recommended - you may be better building and installing hyprland manually instead.
 
 #### Note for Nvidia Users
 
