@@ -1,6 +1,6 @@
 # Template file for 'hyprland'
 pkgname=hyprland
-version=0.41.2
+version=0.42.0
 revision=1
 build_style=cmake
 configure_args=" --no-warn-unused-cli \
@@ -24,6 +24,7 @@ hstmkdeps="
 "
 hostmakedepends=$hstmkdeps
 makedepends="
+        aquamarine
 	cairo-devel
 	hwids
 	hyprcursor
@@ -37,6 +38,7 @@ makedepends="
 	libliftoff-devel
 	libseat-devel
 	libxcb-devel
+        libXcursor-devel
 	libxkbcommon-devel
 	pango-devel
 	tomlplusplus
@@ -53,7 +55,7 @@ license="BSD-3-Clause"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=c2de1ea4f02ae817d42268874f6be692d807dcff9817a0cd438f9a221b045369
+checksum=278c137ad28f5e4ef9d65032b18cb230799c982d008654a90b5060dd32eaa54a
 
 if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
 	configure_args+=" -DCMAKE_CXX_FLAGS=\"-lexecinfo\""
@@ -68,22 +70,22 @@ post_install() {
 	# headers
 	vmkdir usr/include/hyprland
 	vmkdir usr/include/hyprland/protocols
-	vmkdir usr/include/hyprland/wlr
+	#vmkdir usr/include/hyprland/wlr
 	vmkdir usr/share/pkgconfig
 
 	cmake --build ./build --config Release --target generate-protocol-headers
 
 	find src -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland
 
-	pushd subprojects/wlroots-hyprland/include/wlr
-	find . -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland/wlr
-	popd
+	#pushd subprojects/wlroots-hyprland/include/wlr
+	#find . -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland/wlr
+	#popd
 
-	pushd subprojects/wlroots-hyprland/build/include
-	find . -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland/wlr
-	popd
+	#pushd subprojects/wlroots-hyprland/build/include
+	#find . -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland/wlr
+	#popd
 
-	install -Dm0644 protocols/*-protocol.h ${DESTDIR}/usr/include/hyprland/protocols
+	#install -Dm0644 protocols/*.h ${DESTDIR}/usr/include/hyprland/protocols
 	vinstall build/hyprland.pc 644 usr/share/pkgconfig
 }
 

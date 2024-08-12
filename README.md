@@ -98,7 +98,7 @@ cat common/shlibs >> ../void-packages/common/shlibs
 5) Copy srcpkgs to your void-packages srcpkgs directory
 
 ```
-cp -r srcpkgs/* ../void-packages/srcpkgs
+cp -r --remove-destination srcpkgs/* ../void-packages/srcpkgs
 ```
 
 6) Build and install packages
