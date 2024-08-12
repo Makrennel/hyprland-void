@@ -112,70 +112,70 @@ jobs:
         run: |
           git clone --filter=tree:0 https://github.com/hyprwm/hyprutils.git
           cd hyprutils
-          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprutils-nightly/template
+          sed -i "/^version/ s/$/.$(git rev-list --count HEAD).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprutils-nightly/template
           (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprutils-nightly)
 
       - name: Build hyprlang-nightly
         run: |
           git clone --filter=tree:0 https://github.com/hyprwm/hyprlang.git
           cd hyprlang
-          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprlang-nightly/template
+          sed -i "/^version/ s/$/.$(git rev-list --count HEAD).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprlang-nightly/template
           (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlang-nightly)
 
       - name: Build hyprcursor-nightly
         run: |
           git clone --filter=tree:0 https://github.com/hyprwm/hyprcursor.git
           cd hyprcursor
-          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprcursor-nightly/template
+          sed -i "/^version/ s/$/.$(git rev-list --count HEAD).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprcursor-nightly/template
           (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprcursor-nightly)
 
       - name: Build hyprwayland-scanner-nightly
         run: |
           git clone --filter=tree:0 https://github.com/hyprwm/hyprwayland-scanner.git
           cd hyprwayland-scanner
-          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprwayland-scanner-nightly/template
+          sed -i "/^version/ s/$/.$(git rev-list --count HEAD).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprwayland-scanner-nightly/template
           (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprwayland-scanner-nightly)
 
       - name: Build hyprland-nightly
         run: |
           git clone --filter=tree:0 https://github.com/hyprwm/hyprland.git
           cd hyprland
-          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprland-nightly/template
+          sed -i "/^version/ s/$/.$(git rev-list --count HEAD).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprland-nightly/template
           (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland-nightly)
 
       - name: Build hyprland-protocols-nightly
         run: |
           git clone --filter=tree:0 https://github.com/hyprwm/hyprland-protocols.git
           cd hyprland-protocols
-          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprland-protocols-nightly/template
+          sed -i "/^version/ s/$/.$(git rev-list --count HEAD).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprland-protocols-nightly/template
           (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland-protocols-nightly)
 
       - name: Build xdg-desktop-portal-hyprland-nightly
         run: |
           git clone --filter=tree:0 https://github.com/hyprwm/xdg-desktop-portal-hyprland.git
           cd xdg-desktop-portal-hyprland
-          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/xdg-desktop-portal-hyprland-nightly/template
+          sed -i "/^version/ s/$/.$(git rev-list --count HEAD).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/xdg-desktop-portal-hyprland-nightly/template
           (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg xdg-desktop-portal-hyprland-nightly)
 
       - name: Build hypridle-nightly
         run: |
           git clone --filter=tree:0 https://github.com/hyprwm/hypridle.git
           cd hypridle
-          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hypridle-nightly/template
+          sed -i "/^version/ s/$/.$(git rev-list --count HEAD).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hypridle-nightly/template
           (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hypridle-nightly)
 
       - name: Build hyprlock-nightly
         run: |
           git clone --filter=tree:0 https://github.com/hyprwm/hyprlock.git
           cd hyprlock
-          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprlock-nightly/template
+          sed -i "/^version/ s/$/.$(git rev-list --count HEAD).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprlock-nightly/template
           (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlock-nightly)
 
       - name: Build hyprpaper-nightly
         run: |
           git clone --filter=tree:0 https://github.com/hyprwm/hyprpaper.git
           cd hyprpaper
-          sed -i "/^version/ s/$/.$(date +'%Y%m%d' -d @$(git show -s --format=%ct)).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprpaper-nightly/template
+          sed -i "/^version/ s/$/.$(git rev-list --count HEAD).$(git show -s --format=%h)/" ~/void-pkgs/void-packages/srcpkgs/hyprpaper-nightly/template
           (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprpaper-nightly)
 
       # Sometimes xbps-src builds a bunch of other junk I don't want to be liable for distributing

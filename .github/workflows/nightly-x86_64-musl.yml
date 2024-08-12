@@ -88,19 +88,19 @@ jobs:
       # Try to avoid rebuilding packages which are already on the latest commit so we don't waste actions minutes
       - name: Build hyprutils
         run: |
-          export olddate=$(ls ~/oldpkgs | grep hyprutils-nightly | cut -d. -f4)
+          export oldcount=$(ls ~/oldpkgs | grep hyprutils-nightly | cut -d. -f4)
           export oldhash=$(ls ~/oldpkgs | grep hyprutils-nightly | cut -d. -f5 | cut -d_ -f1)
-          echo "Previous Datestamp: $olddate"
+          echo "Previous Revision Number: $oldcount"
           echo "Previous Commit Shorthash: $oldhash"
           git clone --filter=tree:0 https://github.com/hyprwm/hyprutils.git
           cd hyprutils
-          export commitdate=$(date +'%Y%m%d' -d @$(git show -s --format=%ct))
-          export commithash=$(git show -s --format=%h)
-          echo "Current Datestamp: $commitdate"
-          echo "Current Commit Shorthash: $commithash"
-          sed -i "/^version/ s/$/.${commitdate}.${commithash}/" ~/void-pkgs/void-packages/srcpkgs/hyprutils-nightly/template
+          export newcount=$(git rev-list --count HEAD)
+          export newhash=$(git show -s --format=%h)
+          echo "Current Datestamp: $newcount"
+          echo "Current Commit Shorthash: $newhash"
+          sed -i "/^version/ s/$/.${newcount}.${newhash}/" ~/void-pkgs/void-packages/srcpkgs/hyprutils-nightly/template
           cat ~/void-pkgs/void-packages/srcpkgs/hyprutils-nightly/template | grep "version="
-          [ $commitdate -gt $olddate -o $commitdate -eq $olddate -a ! "$commithash" = "$oldhash" ] &&
+          [ $newcount -gt $oldcount ] &&
             (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprutils-nightly) &&
             rm ~/oldpkgs/hyprutils-nightly* &&
             cp ~/hostdir/binpkgs/hyprutils-nightly* ~/oldpkgs ||
@@ -109,19 +109,19 @@ jobs:
 
       - name: Build hyprlang
         run: |
-          export olddate=$(ls ~/oldpkgs | grep hyprlang-nightly | cut -d. -f4)
+          export oldcount=$(ls ~/oldpkgs | grep hyprlang-nightly | cut -d. -f4)
           export oldhash=$(ls ~/oldpkgs | grep hyprlang-nightly | cut -d. -f5 | cut -d_ -f1)
-          echo "Previous Datestamp: $olddate"
+          echo "Previous Datestamp: $oldcount"
           echo "Previous Commit Shorthash: $oldhash"
           git clone --filter=tree:0 https://github.com/hyprwm/hyprlang.git
           cd hyprlang
-          export commitdate=$(date +'%Y%m%d' -d @$(git show -s --format=%ct))
-          export commithash=$(git show -s --format=%h)
-          echo "Current Datestamp: $commitdate"
-          echo "Current Commit Shorthash: $commithash"
-          sed -i "/^version/ s/$/.${commitdate}.${commithash}/" ~/void-pkgs/void-packages/srcpkgs/hyprlang-nightly/template
+          export newcount=$(git rev-list --count HEAD)
+          export newhash=$(git show -s --format=%h)
+          echo "Current Datestamp: $newcount"
+          echo "Current Commit Shorthash: $newhash"
+          sed -i "/^version/ s/$/.${newcount}.${newhash}/" ~/void-pkgs/void-packages/srcpkgs/hyprlang-nightly/template
           cat ~/void-pkgs/void-packages/srcpkgs/hyprlang-nightly/template | grep "version="
-          [ $commitdate -gt $olddate -o $commitdate -eq $olddate -a ! "$commithash" = "$oldhash" ] &&
+          [ $newcount -gt $oldcount ] &&
             (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlang-nightly) &&
             rm ~/oldpkgs/hyprlang-nightly* &&
             cp ~/hostdir/binpkgs/hyprlang-nightly* ~/oldpkgs ||
@@ -129,19 +129,19 @@ jobs:
 
       - name: Build hyprcursor
         run: |
-          export olddate=$(ls ~/oldpkgs | grep hyprcursor-nightly | cut -d. -f4)
+          export oldcount=$(ls ~/oldpkgs | grep hyprcursor-nightly | cut -d. -f4)
           export oldhash=$(ls ~/oldpkgs | grep hyprcursor-nightly | cut -d. -f5 | cut -d_ -f1)
-          echo "Previous Datestamp: $olddate"
+          echo "Previous Datestamp: $oldcount"
           echo "Previous Commit Shorthash: $oldhash"
           git clone --filter=tree:0 https://github.com/hyprwm/hyprcursor.git
           cd hyprcursor
-          export commitdate=$(date +'%Y%m%d' -d @$(git show -s --format=%ct))
-          export commithash=$(git show -s --format=%h)
-          echo "Current Datestamp: $commitdate"
-          echo "Current Commit Shorthash: $commithash"
-          sed -i "/^version/ s/$/.${commitdate}.${commithash}/" ~/void-pkgs/void-packages/srcpkgs/hyprcursor-nightly/template
+          export newcount=$(git rev-list --count HEAD)
+          export newhash=$(git show -s --format=%h)
+          echo "Current Datestamp: $newcount"
+          echo "Current Commit Shorthash: $newhash"
+          sed -i "/^version/ s/$/.${newcount}.${newhash}/" ~/void-pkgs/void-packages/srcpkgs/hyprcursor-nightly/template
           cat ~/void-pkgs/void-packages/srcpkgs/hyprcursor-nightly/template | grep "version="
-          [ $commitdate -gt $olddate -o $commitdate -eq $olddate -a ! "$commithash" = "$oldhash" ] &&
+          [ $newcount -gt $oldcount ] &&
             (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprcursor-nightly) &&
             rm ~/oldpkgs/hyprcursor-nightly* &&
             cp ~/hostdir/binpkgs/hyprcursor-nightly* ~/oldpkgs ||
@@ -149,19 +149,19 @@ jobs:
 
       - name: Build hyprwayland-scanner
         run: |
-          export olddate=$(ls ~/oldpkgs | grep hyprwayland-scanner-nightly | cut -d. -f4)
+          export oldcount=$(ls ~/oldpkgs | grep hyprwayland-scanner-nightly | cut -d. -f4)
           export oldhash=$(ls ~/oldpkgs | grep hyprwayland-scanner-nightly | cut -d. -f5 | cut -d_ -f1)
-          echo "Previous Datestamp: $olddate"
+          echo "Previous Datestamp: $oldcount"
           echo "Previous Commit Shorthash: $oldhash"
           git clone --filter=tree:0 https://github.com/hyprwm/hyprwayland-scanner.git
           cd hyprwayland-scanner
-          export commitdate=$(date +'%Y%m%d' -d @$(git show -s --format=%ct))
-          export commithash=$(git show -s --format=%h)
-          echo "Current Datestamp: $commitdate"
-          echo "Current Commit Shorthash: $commithash"
-          sed -i "/^version/ s/$/.${commitdate}.${commithash}/" ~/void-pkgs/void-packages/srcpkgs/hyprwayland-scanner-nightly/template
+          export newcount=$(git rev-list --count HEAD)
+          export newhash=$(git show -s --format=%h)
+          echo "Current Datestamp: $newcount"
+          echo "Current Commit Shorthash: $newhash"
+          sed -i "/^version/ s/$/.${newcount}.${newhash}/" ~/void-pkgs/void-packages/srcpkgs/hyprwayland-scanner-nightly/template
           cat ~/void-pkgs/void-packages/srcpkgs/hyprwayland-scanner-nightly/template | grep "version="
-          [ $commitdate -gt $olddate -o $commitdate -eq $olddate -a ! "$commithash" = "$oldhash" ] &&
+          [ $newcount -gt $oldcount ] &&
             (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprwayland-scanner-nightly) &&
             rm ~/oldpkgs/hyprwayland-scanner-nightly* &&
             cp ~/hostdir/binpkgs/hyprwayland-scanner-nightly* ~/oldpkgs ||
@@ -169,19 +169,19 @@ jobs:
 
       - name: Build hyprland
         run: |
-          export olddate=$(ls ~/oldpkgs | grep -v devel | grep '^hyprland-nightly' | cut -d. -f4)
+          export oldcount=$(ls ~/oldpkgs | grep -v devel | grep '^hyprland-nightly' | cut -d. -f4)
           export oldhash=$(ls ~/oldpkgs | grep -v devel | grep '^hyprland-nightly' | cut -d. -f5 | cut -d_ -f1)
-          echo "Previous Datestamp: $olddate"
+          echo "Previous Datestamp: $oldcount"
           echo "Previous Commit Shorthash: $oldhash"
           git clone --filter=tree:0 https://github.com/hyprwm/hyprland.git
           cd hyprland
-          export commitdate=$(date +'%Y%m%d' -d @$(git show -s --format=%ct))
-          export commithash=$(git show -s --format=%h)
-          echo "Current Datestamp: $commitdate"
-          echo "Current Commit Shorthash: $commithash"
-          sed -i "/^version/ s/$/.${commitdate}.${commithash}/" ~/void-pkgs/void-packages/srcpkgs/hyprland-nightly/template
+          export newcount=$(git rev-list --count HEAD)
+          export newhash=$(git show -s --format=%h)
+          echo "Current Datestamp: $newcount"
+          echo "Current Commit Shorthash: $newhash"
+          sed -i "/^version/ s/$/.${newcount}.${newhash}/" ~/void-pkgs/void-packages/srcpkgs/hyprland-nightly/template
           cat ~/void-pkgs/void-packages/srcpkgs/hyprland-nightly/template | grep "version="
-          [ $commitdate -gt $olddate -o $commitdate -eq $olddate -a ! "$commithash" = "$oldhash" ] &&
+          [ $newcount -gt $oldcount ] &&
             (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland-nightly) &&
             rm ~/oldpkgs/hyprland-nightly* &&
             cp ~/hostdir/binpkgs/hyprland-nightly* ~/oldpkgs ||
@@ -189,19 +189,19 @@ jobs:
 
       - name: Build hyprland-protocols
         run: |
-          export olddate=$(ls ~/oldpkgs | grep hyprland-protocols-nightly | cut -d. -f3)
+          export oldcount=$(ls ~/oldpkgs | grep hyprland-protocols-nightly | cut -d. -f3)
           export oldhash=$(ls ~/oldpkgs | grep hyprland-protocols-nightly | cut -d. -f4 | cut -d_ -f1)
-          echo "Previous Datestamp: $olddate"
+          echo "Previous Datestamp: $oldcount"
           echo "Previous Commit Shorthash: $oldhash"
           git clone --filter=tree:0 https://github.com/hyprwm/hyprland-protocols.git
           cd hyprland-protocols
-          export commitdate=$(date +'%Y%m%d' -d @$(git show -s --format=%ct))
-          export commithash=$(git show -s --format=%h)
-          echo "Current Datestamp: $commitdate"
-          echo "Current Commit Shorthash: $commithash"
-          sed -i "/^version/ s/$/.${commitdate}.${commithash}/" ~/void-pkgs/void-packages/srcpkgs/hyprland-protocols-nightly/template
+          export newcount=$(git rev-list --count HEAD)
+          export newhash=$(git show -s --format=%h)
+          echo "Current Datestamp: $newcount"
+          echo "Current Commit Shorthash: $newhash"
+          sed -i "/^version/ s/$/.${newcount}.${newhash}/" ~/void-pkgs/void-packages/srcpkgs/hyprland-protocols-nightly/template
           cat ~/void-pkgs/void-packages/srcpkgs/hyprland-protocols-nightly/template | grep "version="
-          [ $commitdate -gt $olddate -o $commitdate -eq $olddate -a ! "$commithash" = "$oldhash" ] &&
+          [ $newcount -gt $oldcount ] &&
             (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland-protocols-nightly) &&
             rm ~/oldpkgs/hyprland-protocols-nightly* &&
             cp ~/hostdir/binpkgs/hyprland-protocols-nightly* ~/oldpkgs ||
@@ -209,19 +209,19 @@ jobs:
 
       - name: Build xdg-desktop-portal-hyprland
         run: |
-          export olddate=$(ls ~/oldpkgs | grep xdg-desktop-portal-hyprland-nightly | cut -d. -f4)
+          export oldcount=$(ls ~/oldpkgs | grep xdg-desktop-portal-hyprland-nightly | cut -d. -f4)
           export oldhash=$(ls ~/oldpkgs | grep xdg-desktop-portal-hyprland-nightly | cut -d. -f5 | cut -d_ -f1)
-          echo "Previous Datestamp: $olddate"
+          echo "Previous Datestamp: $oldcount"
           echo "Previous Commit Shorthash: $oldhash"
           git clone --filter=tree:0 https://github.com/hyprwm/xdg-desktop-portal-hyprland.git
           cd xdg-desktop-portal-hyprland
-          export commitdate=$(date +'%Y%m%d' -d @$(git show -s --format=%ct))
-          export commithash=$(git show -s --format=%h)
-          echo "Current Datestamp: $commitdate"
-          echo "Current Commit Shorthash: $commithash"
-          sed -i "/^version/ s/$/.${commitdate}.${commithash}/" ~/void-pkgs/void-packages/srcpkgs/xdg-desktop-portal-hyprland-nightly/template
+          export newcount=$(git rev-list --count HEAD)
+          export newhash=$(git show -s --format=%h)
+          echo "Current Datestamp: $newcount"
+          echo "Current Commit Shorthash: $newhash"
+          sed -i "/^version/ s/$/.${newcount}.${newhash}/" ~/void-pkgs/void-packages/srcpkgs/xdg-desktop-portal-hyprland-nightly/template
           cat ~/void-pkgs/void-packages/srcpkgs/xdg-desktop-portal-hyprland-nightly/template | grep "version="
-          [ $commitdate -gt $olddate -o $commitdate -eq $olddate -a ! "$commithash" = "$oldhash" ] &&
+          [ $newcount -gt $oldcount ] &&
             (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg xdg-desktop-portal-hyprland-nightly) &&
             rm ~/oldpkgs/xdg-desktop-portal-hyprland-nightly* &&
             cp ~/hostdir/binpkgs/xdg-desktop-portal-hyprland-nightly* ~/oldpkgs ||
@@ -229,19 +229,19 @@ jobs:
 
       - name: Build hypridle
         run: |
-          export olddate=$(ls ~/oldpkgs | grep hypridle-nightly | cut -d. -f4)
+          export oldcount=$(ls ~/oldpkgs | grep hypridle-nightly | cut -d. -f4)
           export oldhash=$(ls ~/oldpkgs | grep hypridle-nightly | cut -d. -f5 | cut -d_ -f1)
-          echo "Previous Datestamp: $olddate"
+          echo "Previous Datestamp: $oldcount"
           echo "Previous Commit Shorthash: $oldhash"
           git clone --filter=tree:0 https://github.com/hyprwm/hypridle.git
           cd hypridle
-          export commitdate=$(date +'%Y%m%d' -d @$(git show -s --format=%ct))
-          export commithash=$(git show -s --format=%h)
-          echo "Current Datestamp: $commitdate"
-          echo "Current Commit Shorthash: $commithash"
-          sed -i "/^version/ s/$/.${commitdate}.${commithash}/" ~/void-pkgs/void-packages/srcpkgs/hypridle-nightly/template
+          export newcount=$(git rev-list --count HEAD)
+          export newhash=$(git show -s --format=%h)
+          echo "Current Datestamp: $newcount"
+          echo "Current Commit Shorthash: $newhash"
+          sed -i "/^version/ s/$/.${newcount}.${newhash}/" ~/void-pkgs/void-packages/srcpkgs/hypridle-nightly/template
           cat ~/void-pkgs/void-packages/srcpkgs/hypridle-nightly/template | grep "version="
-          [ $commitdate -gt $olddate -o $commitdate -eq $olddate -a ! "$commithash" = "$oldhash" ] &&
+          [ $newcount -gt $oldcount ] &&
             (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hypridle-nightly) &&
             rm ~/oldpkgs/hypridle-nightly* &&
             cp ~/hostdir/binpkgs/hypridle-nightly* ~/oldpkgs ||
@@ -249,19 +249,19 @@ jobs:
 
       - name: Build hyprlock
         run: |
-          export olddate=$(ls ~/oldpkgs | grep hyprlock-nightly | cut -d. -f4)
+          export oldcount=$(ls ~/oldpkgs | grep hyprlock-nightly | cut -d. -f4)
           export oldhash=$(ls ~/oldpkgs | grep hyprlock-nightly | cut -d. -f5 | cut -d_ -f1)
-          echo "Previous Datestamp: $olddate"
+          echo "Previous Datestamp: $oldcount"
           echo "Previous Commit Shorthash: $oldhash"
           git clone --filter=tree:0 https://github.com/hyprwm/hyprlock.git
           cd hyprlock
-          export commitdate=$(date +'%Y%m%d' -d @$(git show -s --format=%ct))
-          export commithash=$(git show -s --format=%h)
-          echo "Current Datestamp: $commitdate"
-          echo "Current Commit Shorthash: $commithash"
-          sed -i "/^version/ s/$/.${commitdate}.${commithash}/" ~/void-pkgs/void-packages/srcpkgs/hyprlock-nightly/template
+          export newcount=$(git rev-list --count HEAD)
+          export newhash=$(git show -s --format=%h)
+          echo "Current Datestamp: $newcount"
+          echo "Current Commit Shorthash: $newhash"
+          sed -i "/^version/ s/$/.${newcount}.${newhash}/" ~/void-pkgs/void-packages/srcpkgs/hyprlock-nightly/template
           cat ~/void-pkgs/void-packages/srcpkgs/hyprlock-nightly/template | grep "version="
-          [ $commitdate -gt $olddate -o $commitdate -eq $olddate -a ! "$commithash" = "$oldhash" ] &&
+          [ $newcount -gt $oldcount ] &&
             (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlock-nightly) &&
             ~/oldpkgs/hyprlock-nightly* &&
             cp ~/hostdir/binpkgs/hyprlock-nightly* ~/oldpkgs ||
@@ -269,19 +269,19 @@ jobs:
 
       - name: Build hyprpaper
         run: |
-          export olddate=$(ls ~/oldpkgs | grep hyprpaper-nightly | cut -d. -f4)
+          export oldcount=$(ls ~/oldpkgs | grep hyprpaper-nightly | cut -d. -f4)
           export oldhash=$(ls ~/oldpkgs | grep hyprpaper-nightly | cut -d. -f5 | cut -d_ -f1)
-          echo "Previous Datestamp: $olddate"
+          echo "Previous Datestamp: $oldcount"
           echo "Previous Commit Shorthash: $oldhash"
           git clone --filter=tree:0 https://github.com/hyprwm/hyprpaper.git
           cd hyprpaper
-          export commitdate=$(date +'%Y%m%d' -d @$(git show -s --format=%ct))
-          export commithash=$(git show -s --format=%h)
-          echo "Current Datestamp: $commitdate"
-          echo "Current Commit Shorthash: $commithash"
-          sed -i "/^version/ s/$/.${commitdate}.${commithash}/" ~/void-pkgs/void-packages/srcpkgs/hyprpaper-nightly/template
+          export newcount=$(git rev-list --count HEAD)
+          export newhash=$(git show -s --format=%h)
+          echo "Current Datestamp: $newcount"
+          echo "Current Commit Shorthash: $newhash"
+          sed -i "/^version/ s/$/.${newcount}.${newhash}/" ~/void-pkgs/void-packages/srcpkgs/hyprpaper-nightly/template
           cat ~/void-pkgs/void-packages/srcpkgs/hyprpaper-nightly/template | grep "version="
-          [ $commitdate -gt $olddate -o $commitdate -eq $olddate -a ! "$commithash" = "$oldhash" ] &&
+          [ $newcount -gt $oldcount ] &&
             (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprpaper-nightly) &&
             rm ~/oldpkgs/hyprpaper-nightly* &&
             cp ~/hostdir/binpkgs/hyprpaper-nightly* ~/oldpkgs ||
