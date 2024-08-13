@@ -37,21 +37,13 @@ In order to run Hyprland you will need to install some additional packages which
 
 You may also have to add the user to the `_seatd` group.
 
-### Nightly
-
-There are also binary `-nightly` packages, built automatically at 00:00 UTC directly from git if there is a new commit available. There are templates available for this as well, but you will have to manually force rebuild it every time as XBPS has no built-in means of supporting git packages and upgrading to newer versions from git packages without manually bumping the revision every time.
-
-Note, because of how XBPS is designed, you will have to manually specify `-nightly` dependencies to be installed as it will opt for normal dependencies otherwise:
-
-```
-sudo xbps-install -S hyprland-nightly-devel hyprcursor-nightly hyprlang-nightly hyprutils-nightly
-```
-
-These `-nightly` packages are not particularly recommended - you may be better off building and installing Hyprland manually instead.
-
-#### Note for Nvidia Users
+#### Nvidia
 
 The `hyprland-nvidia` has been removed as it is no longer necessary as of [version 0.33.0](https://github.com/hyprwm/Hyprland/releases/tag/v0.33.0). Nvidia support is still unofficial; refer to the [manual](https://wiki.hyprland.org/hyprland-wiki/pages/Nvidia/).
+
+### Nightly
+
+Nightly packages have been removed as of 2024/08/13. They were always a bad idea, and with [newer git versions](https://github.com/hyprwm/Hyprland/commit/83a334f97df4389ca30cb63e50317a66a82562b9) of Hyprland after version 0.42.0 requiring GCC 14 which has not yet landed in the hopelessly out of date void-packages repository, it simply doesn't make sense to continue maintaining nightly packages in this repository. If you would like to use git packages for Hypr\*, you would probably be better off building directly [from source](https://wiki.hyprland.org/Getting-Started/Installation/#manual-manual-build), or [use Nix](https://nixos.org/download/).
 
 ### Extra
 There are packages in this repository which may be of interest for:
@@ -60,7 +52,6 @@ There are packages in this repository which may be of interest for:
 - hyprlock
 - hyprpaper
 - xdg-desktop-portal-hyprland
-
 
 ### Manually Building
 

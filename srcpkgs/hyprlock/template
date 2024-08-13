@@ -13,10 +13,6 @@ changelog="https://github.com/hyprwm/${pkgname}/releases"
 distfiles="https://github.com/hyprwm/${pkgname}/archive/refs/tags/v${version}.tar.gz"
 checksum=87531a43088cafcadf29115889f37f73ab4a8cb1e4347723dfe8d53fa0aaba60
 
-do_patch() {
-	patch ${wrksrc}/CMakeLists.txt ${wrksrc}/nix/cmake.patch
-}
-
 post_install() {
 	vlicense LICENSE
 }

@@ -24,7 +24,7 @@ hstmkdeps="
 "
 hostmakedepends=$hstmkdeps
 makedepends="
-        aquamarine
+	aquamarine
 	cairo-devel
 	hwids
 	hyprcursor
@@ -38,7 +38,7 @@ makedepends="
 	libliftoff-devel
 	libseat-devel
 	libxcb-devel
-        libXcursor-devel
+	libXcursor-devel
 	libxkbcommon-devel
 	pango-devel
 	tomlplusplus
@@ -70,22 +70,12 @@ post_install() {
 	# headers
 	vmkdir usr/include/hyprland
 	vmkdir usr/include/hyprland/protocols
-	#vmkdir usr/include/hyprland/wlr
 	vmkdir usr/share/pkgconfig
 
 	cmake --build ./build --config Release --target generate-protocol-headers
 
 	find src -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland
-
-	#pushd subprojects/wlroots-hyprland/include/wlr
-	#find . -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland/wlr
-	#popd
-
-	#pushd subprojects/wlroots-hyprland/build/include
-	#find . -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland/wlr
-	#popd
-
-	#install -Dm0644 protocols/*.h ${DESTDIR}/usr/include/hyprland/protocols
+	install -Dm0644 protocols/*.h* ${DESTDIR}/usr/include/hyprland/protocols
 	vinstall build/hyprland.pc 644 usr/share/pkgconfig
 }
 
