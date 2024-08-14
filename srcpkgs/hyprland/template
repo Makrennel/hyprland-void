@@ -63,6 +63,10 @@ if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
 	depends+=" libexecinfo"
 fi
 
+do_patch() {
+	[ "$XBPS_TARGET_LIBC" = "musl" ] && patch -Np1 -i $FILESDIR/strncpy-include-cstring.patch -d $wrksrc
+}
+
 post_install() {
 	# license
 	vlicense LICENSE
