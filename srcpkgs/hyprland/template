@@ -64,7 +64,7 @@ if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
 fi
 
 do_patch() {
-	[ "$XBPS_TARGET_LIBC" = "musl" ] && patch -Np1 -i $FILESDIR/strncpy-include-cstring.patch -d $wrksrc
+	[ "$XBPS_TARGET_LIBC" = "musl" ] && patch -Np1 -i $FILESDIR/strncpy-include-cstring.patch -d $wrksrc || echo "Not on musl, skipping patch"
 }
 
 post_install() {
