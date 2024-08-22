@@ -1,6 +1,6 @@
 # Template file for 'aquamarine'
 pkgname=aquamarine
-version=0.3.1
+version=0.3.3
 revision=1
 build_style=cmake
 hostmakedepends="cmake pkgconf"
@@ -11,5 +11,5 @@ license="LGPL-3.0-only"
 homepage="https://hyprland.org/hyprlang/index.html"
 changelog="https://github.com/hyprwm/aquamarine/releases"
 distfiles="https://github.com/hyprwm/aquamarine/archive/refs/tags/v${version}.tar.gz"
-checksum=fcd1fd001bfbb0555004d86a0a57e3eb89c01eae0e25c171dc22c45b4d0cf860
+checksum=8785d2d0d23ece3dda39c6a51d36b321611578a8339fcfe9f110e17b309d8047
 
