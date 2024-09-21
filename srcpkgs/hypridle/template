@@ -1,9 +1,10 @@
 # Template file for 'hypridle'
 pkgname=hypridle
 version=0.1.2
-revision=1
+revision=2
 build_style=cmake
-hostmakedepends="cmake pkgconf"
+build_helper=clang
+hostmakedepends="cmake pkgconf clang18 libcxx-devel llvm18"
 makedepends="hyprlang sdbus-cpp wayland-devel wayland-protocols"
 short_desc="Hyprland's idle daemon"
 maintainer="Makrennel <makrommel@protonmail.ch>"

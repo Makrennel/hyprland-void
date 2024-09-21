@@ -1,9 +1,10 @@
 # Template file for 'hyprcursor'
 pkgname=hyprcursor
 version=0.1.9
-revision=1
+revision=2
 build_style=cmake
-hostmakedepends="pkgconf cairo-devel"
+build_helper=clang
+hostmakedepends="pkgconf cairo-devel clang18 libcxx-devel"
 makedepends="hyprlang librsvg-devel libzip-devel tomlplusplus"
 short_desc="Hyprland cursor format, library and utilities"
 maintainer="zenobit <zenobit@disroot.org>"

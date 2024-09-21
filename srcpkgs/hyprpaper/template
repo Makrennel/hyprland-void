@@ -2,7 +2,7 @@
 pkgname=hyprpaper
 version=0.7.0
 revision=1
-hostmakedepends="pkgconf cmake wayland-devel"
+hostmakedepends="pkgconf cmake wayland-devel clang18 libcxx-devel llvm18 hyprutils hyprwayland-scanner"
 makedepends="
 	pango-devel
 	cairo-devel
@@ -23,6 +23,10 @@ distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
 checksum=4840425013b95b49120aeb87d4d4e7d83f8956e847a537e1e6dd7f58a4b643b4
 
 do_build() {
+	export CC="clang"
+	export CXX="clang++"
+	export CXXFLAGS="-std=c++2b -stdlib=libc++ ${CXXFLAGS}"
+
 	cmake \
 		--no-warn-unused-cli \
 		-G "Unix Makefiles" \

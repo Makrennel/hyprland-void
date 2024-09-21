@@ -1,9 +1,10 @@
 # Template file for 'hyprwayland-scanner'
 pkgname=hyprwayland-scanner
 version=0.4.0
-revision=1
+revision=2
 build_style=cmake
-hostmakedepends="pkgconf"
+build_helper=clang
+hostmakedepends="pkgconf clang18 libcxx-devel llvm18"
 makedepends="pugixml-devel"
 short_desc="Hyprland's implementation of wayland-scanner in/for C++"
 maintainer="Makrennel <makrommel@protonmail.ch>"

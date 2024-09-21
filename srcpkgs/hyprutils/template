@@ -1,9 +1,10 @@
 # Template file for 'hyprutils'
 pkgname=hyprutils
 version=0.2.1
-revision=1
+revision=2
 build_style=cmake
-hostmakedepends="pkgconf"
+build_helper=clang
+hostmakedepends="pkgconf clang18 libcxx-devel llvm18"
 makedepends="pixman-devel"
 short_desc="A small C++ library used across the Hypr* ecosystem"
 maintainer="Makrennel <makrommel@protonmail.ch>"

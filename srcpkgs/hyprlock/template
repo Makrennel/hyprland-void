@@ -1,9 +1,10 @@
 # Template file for 'hyprlock'
 pkgname=hyprlock
 version=0.4.1
-revision=1
+revision=2
 build_style=cmake
-hostmakedepends="cmake pkgconf"
+build_helper=clang
+hostmakedepends="cmake pkgconf clang18 libcxx-devel llvm18"
 makedepends="cairo-devel hyprlang libdrm-devel libxkbcommon-devel MesaLib-devel pango-devel pam-devel wayland-devel wayland-protocols hyprutils libjpeg-turbo-devel libwebp-devel file-devel"
 short_desc="Hyprland's GPU-accelerated screen locking utility"
 maintainer="Makrennel <makrommel@protonmail.ch>"

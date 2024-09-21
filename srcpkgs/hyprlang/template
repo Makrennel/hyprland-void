@@ -1,9 +1,10 @@
 # Template file for 'hyprlang'
 pkgname=hyprlang
 version=0.5.2
-revision=1
+revision=2
 build_style=cmake
-hostmakedepends="cmake pkgconf"
+build_helper=clang
+hostmakedepends="cmake pkgconf clang18 libcxx-devel llvm18 libcxxabi-devel"
 makedepends="hyprutils"
 short_desc="Official implementation library for the hypr config language"
 maintainer="Makrennel <makrommel@protonmail.ch>"

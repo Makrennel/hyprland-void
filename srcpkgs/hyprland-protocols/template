@@ -1,9 +1,10 @@
 # Template file for 'hyprland-protocols'
 pkgname=hyprland-protocols
 version=0.3.0
-revision=1
+revision=2
 build_style=meson
-hostmakedepends="wayland-devel"
+build_helper=clang
+hostmakedepends="wayland-devel clang18 libcxx-devel llvm18"
 makedepends="wayland-devel"
 short_desc="Wayland protocol extensions for Hyprland"
 maintainer="Makrennel <makrommel@protonmail.ch>"

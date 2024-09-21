@@ -3,6 +3,7 @@ pkgname=hyprland
 version=0.42.0
 revision=1
 build_style=cmake
+build_helper=clang
 configure_args=" --no-warn-unused-cli \
 	-DCMAKE_BUILD_TYPE:STRING=Release \
 	-DCMAKE_INSTALL_PREFIX:PATH=/usr \
@@ -12,7 +13,9 @@ configure_args=" --no-warn-unused-cli \
 hstmkdeps="
 	cmake
 	cpio
-	gcc
+	clang18
+	libcxx-devel
+	llvm18
 	glslang
 	hyprwayland-scanner
 	jq
