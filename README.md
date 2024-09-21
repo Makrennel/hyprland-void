@@ -46,6 +46,7 @@ The `hyprland-nvidia` has been removed as it is no longer necessary as of [versi
 Nightly packages have been removed as of 2024/08/13. They were always a bad idea, and with [newer git versions](https://github.com/hyprwm/Hyprland/commit/83a334f97df4389ca30cb63e50317a66a82562b9) of Hyprland after version 0.42.0 requiring GCC 14 which has not yet landed in the hopelessly out of date void-packages repository, it simply doesn't make sense to continue maintaining nightly packages in this repository. If you would like to use git packages for Hypr\*, you would probably be better off building directly [from source](https://wiki.hyprland.org/Getting-Started/Installation/#manual-manual-build), or [use Nix](https://nixos.org/download/).
 
 ### Extra
+
 There are packages in this repository which may be of interest for:
 
 - hypridle
@@ -57,14 +58,14 @@ There are packages in this repository which may be of interest for:
 
 You may want to build these templates manually, for example if you have a specific configuration requirement that needs to be set at build time. Void-packages may sometimes have specific packages which are out of date from time to time that need to be updated beforehand in order to update Hyprland, which is why this repository is not simply forked off it. We need to copy the modifications from this repository on top of a fresh void-packages clone in order to build manually.
 
-1) You may want to start by making a directory where you can keep the relevant repositories
+1. You may want to start by making a directory where you can keep the relevant repositories
 
 ```
 mkdir ~/repos
 cd ~/repos
 ```
 
-2) Set up a [void-packages](https://github.com/void-linux/void-packages) clone for building templates files
+2. Set up a [void-packages](https://github.com/void-linux/void-packages) clone for building templates files
 
 ```
 git clone https://github.com/void-linux/void-packages
@@ -73,30 +74,35 @@ cd void-packages
 cd ..
 ```
 
-3) Clone this repository:
+3. Clone this repository:
 
 ```
 git clone https://github.com/Makrennel/hyprland-void.git
 cd hyprland-void
 ```
 
-4) Append shared libraries to the end of your void-packages shared libraries
+4. Append shared libraries to the end of your void-packages shared libraries
 
 ```
 cat common/shlibs >> ../void-packages/common/shlibs
 ```
 
-5) Copy srcpkgs to your void-packages srcpkgs directory
+5. Copy clang build helper to your void-packages common/build-helper directory
+
+```
+cp -rf common/build-helper/clang.sh ../void-packages/common/build-helper/
+```
+
+6. Copy srcpkgs to your void-packages srcpkgs directory
 
 ```
 cp -r --remove-destination srcpkgs/* ../void-packages/srcpkgs
 ```
 
-6) Build and install packages
+7. Build and install packages
 
 ```
 cd ../void-packages
 ./xbps-src pkg hyprland
 sudo xbps-install -R hostdir/binpkgs hyprland
 ```
-
