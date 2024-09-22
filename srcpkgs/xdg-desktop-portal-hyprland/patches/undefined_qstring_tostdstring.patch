@@ -1,0 +1,25 @@
+diff --git a/hyprland-share-picker/main.cpp.old b/hyprland-share-picker/main.cpp
+index ff8f206ef08..052253f4e07 100644
+--- a/hyprland-share-picker/main.cpp.old
++++ b/hyprland-share-picker/main.cpp
+@@ -119,5 +119,5 @@ int main(int argc, char* argv[]) {
+         QString       text = QString::fromStdString(std::string("Screen " + std::to_string(i) + " at " + std::to_string(GEOMETRY.x()) + ", " + std::to_string(GEOMETRY.y()) + " (" +
+                                                                 std::to_string(GEOMETRY.width()) + "x" + std::to_string(GEOMETRY.height()) + ") (") +
+-                                                    SCREENS[i]->name().toStdString() + ")");
++                                                    SCREENS[i]->name().toUtf8().constData() + ")");
+         QString       outputName = SCREENS[i]->name();
+         ElidedButton* button     = new ElidedButton(text);
+@@ -130,5 +130,5 @@ int main(int argc, char* argv[]) {
+             std::cout << "/";
+ 
+-            std::cout << "screen:" << outputName.toStdString() << "\n";
++            std::cout << "screen:" << outputName.toUtf8().constData() << "\n";
+ 
+             settings->setValue("width", mainPickerPtr->width());
+@@ -206,5 +206,5 @@ int main(int argc, char* argv[]) {
+ 
+         for (auto& screen : SCREENS) {
+-            if (screen->name().toStdString() == SCREEN_NAME) {
++            if (screen->name().toUtf8().constData() == SCREEN_NAME) {
+                 pScreen = screen;
+                 break;
