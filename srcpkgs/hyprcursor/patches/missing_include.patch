@@ -1,0 +1,10 @@
+diff --git a/libhyprcursor/hyprcursor.cpp.old b/libhyprcursor/hyprcursor.cpp
+index 3a83a264fbc..019e4c09be2 100644
+--- a/libhyprcursor/hyprcursor.cpp.old
++++ b/libhyprcursor/hyprcursor.cpp
+@@ -7,4 +7,5 @@
+ #include <zip.h>
+ #include <cstring>
++#include <sstream>
+ #include <algorithm>
+ #include <cmath>

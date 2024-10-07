@@ -1,6 +1,6 @@
 # Template file for 'hyprcursor'
 pkgname=hyprcursor
-version=0.1.9
+version=0.1.10
 revision=1
 build_style=cmake
 hostmakedepends="pkgconf cairo-devel"
@@ -10,7 +10,7 @@ maintainer="zenobit <zenobit@disroot.org>"
 license="BSD-3-Clause"
 homepage="https://github.com/hyprwm/hyprcursor"
 distfiles="https://github.com/hyprwm/hyprcursor/archive/refs/tags/v${version}.tar.gz"
-checksum=313cd91436af343918e6dec4a666d4bf3666149ac3cac6f36c683b70304eada4
+checksum=67e845404164fee4c5694209b3d5f93a31b6963dbb0bfd6ed2cd96c99b316a08
 
 post_install() {
 	vlicense LICENSE
