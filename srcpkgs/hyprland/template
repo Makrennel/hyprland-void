@@ -1,6 +1,6 @@
 # Template file for 'hyprland'
 pkgname=hyprland
-version=0.44.0
+version=0.44.1
 revision=1
 build_style=cmake
 configure_args=" --no-warn-unused-cli \
@@ -55,17 +55,13 @@ license="BSD-3-Clause"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=c307e52d8f2554b02428926b87060c228472b09ca18fc0d928487aa92559104f
+checksum=a901b9ce5dac48a2b92f287d902c5dc33a05e9946fd082c43142f205246dfc63
 
 if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
 	configure_args+=" -DCMAKE_CXX_FLAGS=\"-lexecinfo\""
 	makedepends+=" libexecinfo-devel"
 	depends+=" libexecinfo"
 fi
-
-do_patch() {
-	[ "$XBPS_TARGET_LIBC" = "musl" ] && patch -Np1 -i $FILESDIR/strncpy-include-cstring.patch -d $wrksrc || echo "Not on musl, skipping patch"
-}
 
 post_install() {
 	# license
