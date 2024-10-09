@@ -1,6 +1,6 @@
 # Template file for 'hyprland-protocols'
 pkgname=hyprland-protocols
-version=0.3.0
+version=0.4.0
 revision=1
 build_style=meson
 hostmakedepends="wayland-devel"
@@ -10,7 +10,7 @@ maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"
 homepage="https://github.com/hyprwm/hyprland-protocols"
 distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
-checksum=b2b446ad5b939c90cdc6317d411bbfb83f9868babad05112369ebd8694d3fc49
+checksum=ab3525d8bad576db911d4ba1b586f303dd988660b3b8980022c1795fd574b165
 
 post_install() {
 	vlicense LICENSE
