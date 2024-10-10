@@ -2,20 +2,6 @@
 
 template_dir="srcpkgs"
 
-repos=(
-	"aquamarine"
-	"hyprland"
-	"hyprpaper"
-	"hyprlang"
-	"hyprlock"
-	"hypridle"
-	"hyprutils"
-	"hyprcursor"
-	"hyprwayland-scanner"
-	"xdg-desktop-portal-hyprland"
-	"hyprland-protocols"
-)
-
 log() {
 	local RED='\033[0;31m'
 	local GREEN='\033[0;32m'
@@ -51,11 +37,13 @@ fetch_version() {
 }
 
 main() {
-	# for repo in "${repos[@]}"; do
-	# 	fetch_latest_version "$repo"
-	# done
+	command -v curl >/dev/null || {
+		log error "Curl not found, please install. Exiting..." >&2
 
-	for package_dir in "$template_dir"/xdg-desktop-portal-hyprland/ "$template_dir"/hypr*/; do
+		exit 1
+	}
+
+	for package_dir in "$template_dir"/aquamarine/ "$template_dir"/hypr*/ "$template_dir"/xdg-desktop-portal-hyprland/; do
 		pkgname=$(basename "$package_dir")
 
 		if [[ "$pkgname" == "hyprland-devel" ]]; then
@@ -71,6 +59,7 @@ main() {
 		fi
 
 		current_version="v$(grep -Po '^version=\K[0-9.]+(?=$)' "$template_file")"
+
 		latest_version=$(fetch_version "$pkgname")
 
 		echo "$pkgname ===> $current_version"
