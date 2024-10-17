@@ -11,5 +11,5 @@ license="LGPL-3.0-only"
 homepage="https://hyprland.org/hyprlang/index.html"
 changelog="https://github.com/hyprwm/aquamarine/releases"
 distfiles="https://github.com/hyprwm/aquamarine/archive/refs/tags/v${version}.tar.gz"
-checksum=ca1f21c7e1533c7760a4a5cd9974ef37a0eb75de7422998ab3daebf7005802fd
+checksum=aa1f22c6c8577613343a100ee895ca3f013505599595697a37853ab9b927e4b4
 
