@@ -1,6 +1,6 @@
 # Template file for 'sdbus-cpp'
 pkgname=sdbus-cpp
-version=1.5.0
+version=2.0.0
 revision=1
 build_style=cmake
 hostmakedepends="cmake meson ninja pkgconf git m4 rsync gperf"
@@ -12,4 +12,4 @@ license="LGPL-2.1-only"
 homepage="https://github.com/Kistler-Group/sdbus-cpp"
 changelog="https://github.com/Kistler-Group/${pkgname}/releases"
 distfiles="https://github.com/Kistler-Group/${pkgname}/archive/refs/tags/v${version}.tar.gz"
-checksum=577986929f911320fb9ef6a3e2badd464dc38411ebc25d2966f5cb85c39f0897
+checksum=88af4569161a0d0192f0f4a94582a1af4e75722499d06984fb7f91f638f5afb3
