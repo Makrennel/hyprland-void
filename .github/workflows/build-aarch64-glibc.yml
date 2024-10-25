@@ -1,0 +1,160 @@
+name: "Build Hyprland aarch64 Glibc"
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  REPO_OWNER: "${{ github.repository_owner }}"
+  REPO_NAME: "${{ github.event.repository.name }}"
+
+jobs:
+  build:
+    name: Build Hyprland
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/void-linux/void-buildroot-${{ matrix.config.libc }}:20240526R1
+      options: --platform ${{ matrix.config.platform }}
+      env:
+        PATH: "/usr/libexec/chroot-git:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/bin:/tmp/bin"
+        ARCH: "${{ matrix.config.arch }}"
+        BOOTSTRAP: "${{ matrix.config.host }}"
+        TEST: "${{ matrix.config.test }}"
+        HOSTREPO: /hostrepo
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              arch: aarch64,
+              host: x86_64,
+              libc: glibc,
+              platform: linux/amd64,
+              test: 0,
+            }
+
+    steps:
+      - name: Prepare container
+        run: |
+          mkdir -p /etc/xbps.d && cp /usr/share/xbps.d/*-repository-*.conf /etc/xbps.d/
+          ls -la
+          sed -i 's|repo-default|repo-ci|g' /etc/xbps.d/*-repository-*.conf
+          xbps-install -Syu xbps
+          xbps-install -Syu
+          xbps-install -y tar curl
+
+      - name: Install architecture support
+        run: |
+          xbps-install -Sy binfmt-support
+          ln -s /etc/sv/binfmt-support /var/service
+          xbps-install -Sy qemu-user
+          
+      - name: Clone Void-Packages and prepare
+        run: |
+          mkdir ~/void-pkgs
+          cd ~/void-pkgs
+          git clone --depth 1 https://github.com/void-linux/void-packages.git
+
+      - name: Clone Hyprland-Void repo and prepare
+        run: |
+          cd ~/void-pkgs
+          git clone https://github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git
+          cd ${{ env.REPO_NAME }}
+          cat common/shlibs >> ../void-packages/common/shlibs
+          cp -r srcpkgs/* ../void-packages/srcpkgs
+
+      - name: Create hostrepo and prepare masterdir
+        run: |
+          cd ~/void-pkgs/void-packages
+          ln -s "$(pwd)" /hostrepo &&
+          common/travis/set_mirror.sh &&
+          common/travis/prepare.sh &&
+          common/travis/fetch-xtools.sh
+
+      # All declared individually for logging purposes
+      # Common Deps
+      - name: Build tomlplusplus
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg tomlplusplus)
+
+      - name: Build sdbus-cpp
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg sdbus-cpp)
+
+      # Normal Build
+      - name: Build hyprutils
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg hyprutils)
+
+      - name: Build hyprlang
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg hyprlang)
+
+      - name: Build hyprcursor
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg hyprcursor)
+
+      - name: Build hyprwayland-scanner
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg hyprwayland-scanner)
+
+      - name: Build aquamarine
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg aquamarine)
+
+      - name: Build hyprland
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg hyprland)
+
+      - name: Build hyprland-protocols
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg hyprland-protocols)
+
+      - name: Build xdg-desktop-portal-hyprland
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg xdg-desktop-portal-hyprland)
+
+      - name: Build hypridle
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg hypridle)
+
+      - name: Build hyprlock
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg hyprlock)
+
+      - name: Build hyprpaper
+        run: (/hostrepo/xbps-src -A aarch64 -j$(nproc) -s -H ~/hostdir pkg hyprpaper)
+
+      # Sometimes xbps-src builds a bunch of other junk I don't want to be liable for distributing
+      - name: Copy relevant packages to new directory to be packaged
+        run: |
+          mkdir ~/packages
+          cp ~/hostdir/binpkgs/aquamarine*.xbps ~/packages
+          cp ~/hostdir/binpkgs/hypr*.xbps ~/packages
+          cp ~/hostdir/binpkgs/xdg-desktop-portal-hyprland*.xbps ~/packages
+          cp ~/hostdir/binpkgs/sdbus-cpp*.xbps ~/packages
+          cp ~/hostdir/binpkgs/tomlplusplus*.xbps ~/packages
+          cd ~/packages
+          xbps-rindex -a *
+
+      # Retrieve the signing key from the separate private repository
+      - name: Retrieve private key
+        run: |
+          cd ~
+          curl -H 'Authorization: token ${{ secrets.PEM_PAT }}' \
+            -H 'Accept: application/vnd.github.v3.raw' \
+            -O -L https://api.github.com/repos/${{ env.REPO_OWNER }}/hyprland-void-private-pem/contents/private.pem
+
+      # We need to sign the packages with our private key so that they will be accepted by xbps remotely
+      # See: https://docs.voidlinux.org/xbps/repositories/signing.html
+      - name: Sign repository
+        run: |
+          export XBPS_PASSPHRASE=${{ secrets.PRIVATE_PEM_PASSPHRASE }}
+          xbps-rindex --privkey ~/private.pem --sign --signedby "${{ env.REPO_NAME }}-github-action" ~/packages
+          xbps-rindex --privkey ~/private.pem --sign-pkg ~/packages/*.xbps
+
+      # We'll blow the size of the repository up very quickly if we do not delete old iterations of the repository
+      - name: Delete old repository and recreate with new packages
+        run: |
+          cd ~/void-pkgs/${{ env.REPO_NAME }}
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git push https://${{ env.REPO_OWNER }}:${{ secrets.ACCESS_GIT }}@github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git -d repository-aarch64-glibc
+          git switch --orphan repository-aarch64-glibc
+          cp ~/packages/* ./
+          git add .
+          git commit -m "Upload latest packages to repository"
+          git push https://${{ env.REPO_OWNER }}:${{ secrets.ACCESS_GIT }}@github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git repository-aarch64-glibc
+

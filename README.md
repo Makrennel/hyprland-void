@@ -4,7 +4,7 @@ This repository contains template files and binaries for building or installing 
 
 ### Installation
 
-The easiest way to install Hyprland on Void Linux is using the [repository](https://github.com/Makrennel/hyprland-void/tree/repository-x86_64-glibc) which consists of binaries built automatically using GitHub Actions whenever a new commit is pushed.
+The easiest way to install Hyprland on Void Linux is using the [repository](https://github.com/Makrennel/hyprland-void/tree/repository-x86_64-glibc) which consists of binaries built automatically using GitHub Actions whenever a new commit is pushed to this repository.
 
 You can add this repository to xbps's repositories by creating a file such as `/etc/xbps.d/hyprland-void.conf` with the following text:
 
@@ -28,22 +28,14 @@ Currently this repository provides binary packages for:
 
 - x86_64-glibc
 - x86_64-musl
+- aarch64-glibc
+- aarch64-musl
 
 Change the end of the url at `/etc/xbps.d/hyprland-void.conf` as appropriate with the above options.
 
 ### Running
 
-In order to run Hyprland you will need to install some additional packages which will depend on your setup, for example a [session and seat manager](https://docs.voidlinux.org/config/session-management.html) and [graphics drivers](https://docs.voidlinux.org/config/graphical-session/graphics-drivers/index.html).
-
-You may also have to add the user to the `_seatd` group.
-
-#### Nvidia
-
-The `hyprland-nvidia` has been removed as it is no longer necessary as of [version 0.33.0](https://github.com/hyprwm/Hyprland/releases/tag/v0.33.0). Nvidia support is still unofficial; refer to the [manual](https://wiki.hyprland.org/hyprland-wiki/pages/Nvidia/).
-
-### Nightly
-
-Nightly packages have been removed as of 2024/08/13. They were always a bad idea, and with [newer git versions](https://github.com/hyprwm/Hyprland/commit/83a334f97df4389ca30cb63e50317a66a82562b9) of Hyprland after version 0.42.0 requiring GCC 14 which has not yet landed in the hopelessly out of date void-packages repository, it simply doesn't make sense to continue maintaining nightly packages in this repository. If you would like to use git packages for Hypr\*, you would probably be better off building directly [from source](https://wiki.hyprland.org/Getting-Started/Installation/#manual-manual-build), or [use Nix](https://nixos.org/download/).
+In order to run Hyprland you will need to install some additional packages which will depend on your setup, for example a [session and seat manager](https://docs.voidlinux.org/config/session-management.html) and [graphics drivers](https://docs.voidlinux.org/config/graphical-session/graphics-drivers/index.html). You may also have to add the user to the `_seatd` group. If you use an Nvidia GPU refer to the [Hyprland Wiki](https://wiki.hyprland.org/Nvidia), but keep in mind that Hyprland does not officially support Nvidia.
 
 ### Extra
 There are packages in this repository which may be of interest for:
