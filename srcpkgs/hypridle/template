@@ -1,6 +1,6 @@
 # Template file for 'hypridle'
 pkgname=hypridle
-version=0.1.4
+version=0.1.5
 revision=1
 build_style=cmake
 hostmakedepends="cmake pkgconf"
@@ -11,7 +11,7 @@ license="BSD-3-Clause"
 homepage="https://github.com/hyprwm/hypridle"
 changelog="https://github.com/hyprwm/${pkgname}/releases"
 distfiles="https://github.com/hyprwm/hypridle/archive/refs/tags/v${version}.tar.gz"
-checksum=4a878917be65ab2df24f9036846339610861b845b9f1bb9ca0bdffdc1e368050
+checksum=174d4b4706ec5c79e6d80a7cc3b297b5564c923f60f408c1638b55424a998a4b
 
 post_install() {
 	vlicense LICENSE
