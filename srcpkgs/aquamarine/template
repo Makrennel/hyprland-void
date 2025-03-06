@@ -1,7 +1,7 @@
 # Template file for 'aquamarine'
 pkgname=aquamarine
 version=0.4.4
-revision=1
+revision=2
 build_style=cmake
 hostmakedepends="cmake pkgconf"
 makedepends="hyprutils MesaLib-devel hyprwayland-scanner libseat-devel libinput-devel wayland-devel wayland-protocols pixman-devel libdisplay-info-devel hwids"
