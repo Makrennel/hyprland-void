@@ -13,5 +13,6 @@ distfiles="https://github.com/hyprwm/hyprcursor/archive/refs/tags/v${version}.ta
 checksum=67e845404164fee4c5694209b3d5f93a31b6963dbb0bfd6ed2cd96c99b316a08
 
 post_install() {
-	vlicense LICENSE
+  vlicense LICENSE
 }
+

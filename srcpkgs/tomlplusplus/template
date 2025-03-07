@@ -12,5 +12,6 @@ distfiles="https://github.com/marzer/${pkgname}/archive/refs/tags/v${version}.ta
 checksum=8517f65938a4faae9ccf8ebb36631a38c1cadfb5efa85d9a72e15b9e97d25155
 
 post_install() {
-	vlicense LICENSE
+  vlicense LICENSE
 }
+

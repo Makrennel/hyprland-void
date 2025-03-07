@@ -4,16 +4,16 @@ version=0.7.1
 revision=1
 hostmakedepends="pkgconf cmake wayland-devel hyprutils hyprwayland-scanner"
 makedepends="
-	pango-devel
-	cairo-devel
-	libjpeg-turbo-devel
-	wayland-devel
-	wayland-protocols
-	wlroots-devel
-	hyprland-protocols
-	hyprlang
-	libwebp-devel
-	file-devel
+  pango-devel
+  cairo-devel
+  libjpeg-turbo-devel
+  wayland-devel
+  wayland-protocols
+  wlroots-devel
+  hyprland-protocols
+  hyprlang
+  libwebp-devel
+  file-devel
 "
 short_desc="Fast wallpaper utility for wlroots compositors with IPC controls"
 maintainer="Makrennel <makrommel@protonmail.ch>"
@@ -23,17 +23,18 @@ distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
 checksum=1086a9c7e4126446315aed23fc610f0869b77c899b9d828f997e7188341391e7
 
 do_build() {
-	cmake \
-		--no-warn-unused-cli \
-		-G "Unix Makefiles" \
-		-D CMAKE_BUILD_TYPE=Release \
-		-D CMAKE_INSTALL_PREFIX=/usr \
-		-B build
-	make protocols
-	make -C build all
+  cmake \
+    --no-warn-unused-cli \
+    -G "Unix Makefiles" \
+    -D CMAKE_BUILD_TYPE=Release \
+    -D CMAKE_INSTALL_PREFIX=/usr \
+    -B build
+  make protocols
+  make -C build all
 }
 
 do_install() {
-	vbin build/hyprpaper
-	vlicense LICENSE
+  vbin build/hyprpaper
+  vlicense LICENSE
 }
+

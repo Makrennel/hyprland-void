@@ -14,5 +14,6 @@ distfiles="https://github.com/hyprwm/hypridle/archive/refs/tags/v${version}.tar.
 checksum=174d4b4706ec5c79e6d80a7cc3b297b5564c923f60f408c1638b55424a998a4b
 
 post_install() {
-	vlicense LICENSE
+  vlicense LICENSE
 }
+

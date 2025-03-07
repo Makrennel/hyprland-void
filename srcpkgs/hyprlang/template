@@ -12,3 +12,4 @@ homepage="https://hyprland.org/hyprlang/index.html"
 changelog="https://github.com/hyprwm/hyprlang/releases"
 distfiles="https://github.com/hyprwm/hyprlang/archive/refs/tags/v${version}.tar.gz"
 checksum=9715311d6b31c18f1e83da999269c71a61c0862645795d2666fa1d7b20d5d0f6
+

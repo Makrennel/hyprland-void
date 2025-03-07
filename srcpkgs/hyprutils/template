@@ -13,5 +13,6 @@ distfiles="https://github.com/hyprwm/hyprutils/archive/refs/tags/v${version}.tar
 checksum=ce8455a7bb74e2266910f9a3c1fcbcc9fa4317ca057ba6e8fbf79ec95c8ef699
 
 post_install() {
-	vlicense LICENSE
+  vlicense LICENSE
 }
+

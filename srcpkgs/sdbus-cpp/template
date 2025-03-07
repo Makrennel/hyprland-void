@@ -13,3 +13,4 @@ homepage="https://github.com/Kistler-Group/sdbus-cpp"
 changelog="https://github.com/Kistler-Group/${pkgname}/releases"
 distfiles="https://github.com/Kistler-Group/${pkgname}/archive/refs/tags/v${version}.tar.gz"
 checksum=88af4569161a0d0192f0f4a94582a1af4e75722499d06984fb7f91f638f5afb3
+
