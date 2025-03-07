@@ -12,6 +12,7 @@ makedepends="
   wlroots-devel
   hyprland-protocols
   hyprlang
+  hyprwayland-scanner
   libwebp-devel
   file-devel
 "

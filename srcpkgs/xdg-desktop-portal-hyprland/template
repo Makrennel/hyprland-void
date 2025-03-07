@@ -10,6 +10,7 @@ hostmakedepends="
   cmake
   git
   hyprwayland-scanner
+  qt6-base-devel
 "
 makedepends="
   wayland-devel
