@@ -140,7 +140,7 @@ jobs:
           sudo -Eu builder git config user.name "github-actions[bot]"
           sudo -Eu builder git config user.email "github-actions[bot]@users.noreply.github.com"
           sudo -Eu builder git push https://${{ env.REPO_OWNER }}:${{ secrets.ACCESS_GIT }}@github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git -d repository-${{ env.ARCH_NAME }}
-          sudo -Eu builder git switch --orphan repository-aarch64-glibc
+          sudo -Eu builder git switch --orphan repository-${{ env.ARCH_NAME }}
           sudo -Eu builder cp /work/packages/* ./
           sudo -Eu builder git add .
           sudo -Eu builder git commit -m "Upload latest packages to repository"
