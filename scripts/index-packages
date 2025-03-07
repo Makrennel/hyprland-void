@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+mkdir /work/packages
+
+cp /work/built/binpkgs/aquamarine*.xbps /work/packages
+cp /work/built/binpkgs/hypr*.xbps /work/packages
+cp /work/built/binpkgs/xdg-desktop-portal-hyprland*.xbps /work/packages
+cp /work/built/binpkgs/sdbus-cpp*.xbps /work/packages
+cp /work/built/binpkgs/tomlplusplus*.xbps /work/packages
+
+cd /work/packages
+xbps-rindex -a *
+

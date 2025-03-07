@@ -9,6 +9,8 @@ on:
 env:
   REPO_OWNER: "${{ github.repository_owner }}"
   REPO_NAME: "${{ github.event.repository.name }}"
+  ARCH_NAME: "x86_64-musl"
+  BUILD_ARGS: ""
 
 jobs:
   build:
@@ -16,14 +18,12 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/void-linux/void-buildroot-${{ matrix.config.libc }}:20240526R1
-      options: --platform ${{ matrix.config.platform }}
+      image: ghcr.io/void-linux/void-${{ matrix.config.libc }}-full:20250227R1
+      options: --platform ${{ matrix.config.platform }} --privileged
       env:
-        PATH: "/usr/libexec/chroot-git:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/bin:/tmp/bin"
         ARCH: "${{ matrix.config.arch }}"
         BOOTSTRAP: "${{ matrix.config.host }}"
         TEST: "${{ matrix.config.test }}"
-        HOSTREPO: /hostrepo
 
     strategy:
       fail-fast: false
@@ -38,117 +38,112 @@ jobs:
             }
 
     steps:
-      - name: Prepare container
+      - name: Prepare container and create a non-root user
         run: |
           mkdir -p /etc/xbps.d && cp /usr/share/xbps.d/*-repository-*.conf /etc/xbps.d/
-          ls -la
           sed -i 's|repo-default|repo-ci|g' /etc/xbps.d/*-repository-*.conf
-          xbps-install -Syu xbps
-          xbps-install -Syu
-          xbps-install -y tar curl
-          
-      - name: Clone Void-Packages and prepare
+          xbps-install -Syu xbps && xbps-install -yu && xbps-install -y sudo bash grep curl git
+          useradd -G xbuilder -M builder
+
+      - name: Clone Void-Packages
         run: |
-          mkdir ~/void-pkgs
-          cd ~/void-pkgs
+          mkdir /work && cd /work
           git clone --depth 1 https://github.com/void-linux/void-packages.git
 
       - name: Clone Hyprland-Void repo and prepare
         run: |
-          cd ~/void-pkgs
+          cd /work
           git clone https://github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git
           cd ${{ env.REPO_NAME }}
-          cat common/shlibs >> ../void-packages/common/shlibs
-          cp -r srcpkgs/* ../void-packages/srcpkgs
+          cat common/shlibs >> /work/void-packages/common/shlibs
+          cp -r srcpkgs/* /work/void-packages/srcpkgs
 
-      - name: Create hostrepo and prepare masterdir
+      - name: Prepare masterdir
         run: |
-          cd ~/void-pkgs/void-packages
-          ln -s "$(pwd)" /hostrepo &&
-          common/travis/set_mirror.sh &&
-          common/travis/prepare.sh &&
+          chown -R builder:builder /work
+          cd /work/void-packages
+          sudo -Eu builder common/travis/set_mirror.sh &&
+          sudo -Eu builder common/travis/prepare.sh &&
           common/travis/fetch-xtools.sh
+
+      - name: Export envs
+        run: |
+          echo "BUILD_ARGS=${{ env.BUILD_ARGS }}" >> "$GITHUB_ENV"
+          echo "SCRIPT_DIR=/work/${{ env.REPO_NAME }}/scripts" >> "$GITHUB_ENV"
 
       # All declared individually for logging purposes
       # Common Deps
       - name: Build tomlplusplus
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg tomlplusplus)
+        run: PACKAGE=tomlplusplus $SCRIPT_DIR/build-package
 
       - name: Build sdbus-cpp
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg sdbus-cpp)
+        run: PACKAGE=sdbus-cpp $SCRIPT_DIR/build-package
 
-      # Normal Build
+      # Normal Builds
       - name: Build hyprutils
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprutils)
+        run: PACKAGE=hyprutils $SCRIPT_DIR/build-package
 
       - name: Build hyprlang
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlang)
+        run: PACKAGE=hyprlang $SCRIPT_DIR/build-package
 
       - name: Build hyprcursor
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprcursor)
+        run: PACKAGE=hyprcursor $SCRIPT_DIR/build-package
 
       - name: Build hyprwayland-scanner
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprwayland-scanner)
+        run: PACKAGE=hyprwayland-scanner $SCRIPT_DIR/build-package
 
       - name: Build aquamarine
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg aquamarine)
+        run: PACKAGE=aquamarine $SCRIPT_DIR/build-package
 
       - name: Build hyprland
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland)
+        run: PACKAGE=hyprland $SCRIPT_DIR/build-package
 
       - name: Build hyprland-protocols
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland-protocols)
+        run: PACKAGE=hyprland-protocols $SCRIPT_DIR/build-package
 
       - name: Build xdg-desktop-portal-hyprland
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg xdg-desktop-portal-hyprland)
+        run: PACKAGE=xdg-desktop-portal-hyprland $SCRIPT_DIR/build-package
 
       - name: Build hypridle
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hypridle)
+        run: PACKAGE=hypridle $SCRIPT_DIR/build-package
 
       - name: Build hyprlock
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlock)
+        run: PACKAGE=hyprlock $SCRIPT_DIR/build-package
 
       - name: Build hyprpaper
-        run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprpaper)
+        run: PACKAGE=hyprpaper $SCRIPT_DIR/build-package
 
       # Sometimes xbps-src builds a bunch of other junk I don't want to be liable for distributing
-      - name: Copy relevant packages to new directory to be packaged
-        run: |
-          mkdir ~/packages
-          cp ~/hostdir/binpkgs/aquamarine*.xbps ~/packages
-          cp ~/hostdir/binpkgs/hypr*.xbps ~/packages
-          cp ~/hostdir/binpkgs/xdg-desktop-portal-hyprland*.xbps ~/packages
-          cp ~/hostdir/binpkgs/sdbus-cpp*.xbps ~/packages
-          cp ~/hostdir/binpkgs/tomlplusplus*.xbps ~/packages
-          cd ~/packages
-          xbps-rindex -a *
+      - name: Copy relevant packages to new directory for indexing
+        run: sudo -Eu builder $SCRIPT_DIR/index-packages
 
       # Retrieve the signing key from the separate private repository
       - name: Retrieve private key
         run: |
-          cd ~
-          curl -H 'Authorization: token ${{ secrets.PEM_PAT }}' \
+          cd /work
+          sudo -Eu builder curl -H 'Authorization: token ${{ secrets.PEM_PAT }}' \
             -H 'Accept: application/vnd.github.v3.raw' \
             -O -L https://api.github.com/repos/${{ env.REPO_OWNER }}/hyprland-void-private-pem/contents/private.pem
 
       # We need to sign the packages with our private key so that they will be accepted by xbps remotely
       # See: https://docs.voidlinux.org/xbps/repositories/signing.html
-      - name: Sign repository
+      - name: Sign package repository
         run: |
           export XBPS_PASSPHRASE=${{ secrets.PRIVATE_PEM_PASSPHRASE }}
-          xbps-rindex --privkey ~/private.pem --sign --signedby "${{ env.REPO_NAME }}-github-action" ~/packages
-          xbps-rindex --privkey ~/private.pem --sign-pkg ~/packages/*.xbps
+          sudo -Eu builder xbps-rindex --privkey /work/private.pem --sign --signedby "${{ env.REPO_NAME }}-github-action" /work/packages
+          sudo -Eu builder xbps-rindex --privkey /work/private.pem --sign-pkg /work/packages/*.xbps
 
       # We'll blow the size of the repository up very quickly if we do not delete old iterations of the repository
       - name: Delete old repository and recreate with new packages
         run: |
-          cd ~/void-pkgs/${{ env.REPO_NAME }}
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git push https://${{ env.REPO_OWNER }}:${{ secrets.ACCESS_GIT }}@github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git -d repository-x86_64-musl
-          git switch --orphan repository-x86_64-musl
-          cp ~/packages/* ./
-          git add .
-          git commit -m "Upload latest packages to repository"
-          git push https://${{ env.REPO_OWNER }}:${{ secrets.ACCESS_GIT }}@github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git repository-x86_64-musl
+          cd /work/${{ env.REPO_NAME }}
+          sudo -Eu builder git config user.name "github-actions[bot]"
+          sudo -Eu builder git config user.email "github-actions[bot]@users.noreply.github.com"
+          sudo -Eu builder git push https://${{ env.REPO_OWNER }}:${{ secrets.ACCESS_GIT }}@github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git -d repository-${{ env.ARCH_NAME }}
+          sudo -Eu builder git switch --orphan repository-aarch64-glibc
+          sudo -Eu builder cp /work/packages/* ./
+          sudo -Eu builder git add .
+          sudo -Eu builder git commit -m "Upload latest packages to repository"
+          sudo -Eu builder git push https://${{ env.REPO_OWNER }}:${{ secrets.ACCESS_GIT }}@github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git repository-${{ env.ARCH_NAME }}
+
 
