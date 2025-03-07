@@ -4,35 +4,36 @@ version=1.3.8
 revision=1
 build_style=cmake
 hostmakedepends="
-	pkgconf
-	wayland-devel
-	scdoc
-	cmake
-	git
+  pkgconf
+  wayland-devel
+  scdoc
+  cmake
+  git
+  hyprwayland-scanner
 "
 makedepends="
-	wayland-devel
-	wayland-protocols
-	hyprland-protocols
-	pipewire-devel
-	libgbm-devel
-	libdrm-devel
-	elogind-devel
-	qt6-base-devel
-	hyprlang
-	hyprutils
-	hyprwayland-scanner
-	sdbus-cpp
+  wayland-devel
+  wayland-protocols
+  hyprland-protocols
+  pipewire-devel
+  libgbm-devel
+  libdrm-devel
+  elogind-devel
+  qt6-base-devel
+  hyprlang
+  hyprutils
+  hyprwayland-scanner
+  sdbus-cpp
 "
 depends="
-	xdg-desktop-portal
-	pipewire
-	qt6-base
-	qt6-wayland
-	hyprlang
-	hyprutils
-	hyprwayland-scanner
-	sdbus-cpp
+  xdg-desktop-portal
+  pipewire
+  qt6-base
+  qt6-wayland
+  hyprlang
+  hyprutils
+  hyprwayland-scanner
+  sdbus-cpp
 "
 short_desc="Backend of xdg-desktop-portal for Hyprland"
 maintainer="Makrennel <makrommel@protonmail.ch>"
@@ -42,5 +43,5 @@ distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
 checksum=05333efe1dd4f0e1ea4713686438f102b2eb845ca3fc27467dc84c254df7f021
 
 post_install() {
-	vlicense LICENSE
+  vlicense LICENSE
 }
