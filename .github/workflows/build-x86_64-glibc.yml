@@ -123,43 +123,24 @@ jobs:
       # Retrieve the signing key from the separate private repository
       - name: Retrieve private key
         run: |
-          cd /work
-          sudo -Eu builder curl -H 'Authorization: token ${{ secrets.PEM_PAT }}' \
-            -H 'Accept: application/vnd.github.v3.raw' \
-            -O -L https://api.github.com/repos/${{ env.REPO_OWNER }}/hyprland-void-private-pem/contents/private.pem
-          if [ ! -f /work/private.pem ]; then
-            echo "Error: Private key not found!"
-            exit 1
-          fi
+          cd ~
+          curl -O https://raw.githubusercontent.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/master/common/private.pem
 
-      - name: Sign package repository
+      - name: Sign repository
         run: |
           export XBPS_PASSPHRASE=${{ secrets.PRIVATE_PEM_PASSPHRASE }}
-          sudo -Eu builder xbps-rindex --privkey /work/private.pem --sign --signedby "${{ env.REPO_NAME }}-github-action" /work/packages
-          sudo -Eu builder xbps-rindex --privkey /work/private.pem --sign-pkg /work/packages/*.xbps
-          if [ $? -ne 0 ]; then
-            echo "Error: Failed to sign packages!"
-            exit 1
-          fi
+          xbps-rindex --privkey ~/private.pem --sign --signedby "${{ env.REPO_NAME }}-github-action" ~/packages
+          xbps-rindex --privkey ~/private.pem --sign-pkg ~/packages/*.xbps
+      
 
-            # We need to sign the packages with our private key so that they will be accepted by xbps remotely
-            # See: https://docs.voidlinux.org/xbps/repositories/signing.html
-            - name: Sign package repository
-              run: |
-                export XBPS_PASSPHRASE=${{ secrets.PRIVATE_PEM_PASSPHRASE }}
-                sudo -Eu builder xbps-rindex --privkey /work/private.pem --sign --signedby "${{ env.REPO_NAME }}-github-action" /work/packages
-                sudo -Eu builder xbps-rindex --privkey /work/private.pem --sign-pkg /work/packages/*.xbps
-
-            # We'll blow the size of the repository up very quickly if we do not delete old iterations of the repository
-            - name: Delete old repository and recreate with new packages
-              run: |
-                cd /work/${{ env.REPO_NAME }}
-                sudo -Eu builder git config user.name "github-actions[bot]"
-                sudo -Eu builder git config user.email "github-actions[bot]@users.noreply.github.com"
-                sudo -Eu builder git push https://${{ env.REPO_OWNER }}:${{ secrets.ACCESS_GIT }}@github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git -d repository-${{ env.ARCH_NAME }}
-                sudo -Eu builder git switch --orphan repository-${{ env.ARCH_NAME }}
-                sudo -Eu builder cp /work/packages/* ./
-                sudo -Eu builder git add .
-                sudo -Eu builder git commit -m "Upload latest packages to repository"
-                sudo -Eu builder git push https://${{ env.REPO_OWNER }}:${{ secrets.ACCESS_GIT }}@github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git repository-${{ env.ARCH_NAME }}
-
+      - name: Compress Packages
+        run: |
+          cd ~/packages
+          ls -la
+          tar -czvf ${{ env.PACKAGES_FILE }} *
+    
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.REPO_NAME }}
+          path: ~/packages/${{ env.PACKAGES_FILE }}
