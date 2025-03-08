@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-template_dir="../srcpkgs"
+template_dir="srcpkgs"
 
 log() {
 	local RED='\033[0;31m'
@@ -77,4 +77,3 @@ main() {
 }
 
 main
-

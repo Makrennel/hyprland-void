@@ -1,16 +1,16 @@
 name: "Build Hyprland x86_64 Glibc"
 
 on:
-  push:
-    branches:
-      - master
+  # push:
+  #   branches:
+      # - test
+      # - main
   workflow_dispatch:
 
 env:
   REPO_OWNER: "${{ github.repository_owner }}"
   REPO_NAME: "${{ github.event.repository.name }}"
-  ARCH_NAME: "x86_64-glibc"
-  BUILD_ARGS: ""
+  PACKAGES_FILE: "packages.tar.gz"
 
 jobs:
   build:
@@ -18,12 +18,14 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/void-linux/void-${{ matrix.config.libc }}-full:20250227R1
-      options: --platform ${{ matrix.config.platform }} --privileged
+      image: ghcr.io/void-linux/void-buildroot-${{ matrix.config.libc }}:20240526R1
+      options: --platform ${{ matrix.config.platform }}
       env:
+        PATH: "/usr/libexec/chroot-git:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/bin:/tmp/bin"
         ARCH: "${{ matrix.config.arch }}"
         BOOTSTRAP: "${{ matrix.config.host }}"
         TEST: "${{ matrix.config.test }}"
+        HOSTREPO: /hostrepo
 
     strategy:
       fail-fast: false
@@ -38,109 +40,143 @@ jobs:
             }
 
     steps:
-      - name: Prepare container and create a non-root user
+      - name: Prepare container
         run: |
           mkdir -p /etc/xbps.d && cp /usr/share/xbps.d/*-repository-*.conf /etc/xbps.d/
+          ls -la
           sed -i 's|repo-default|repo-ci|g' /etc/xbps.d/*-repository-*.conf
-          xbps-install -Syu xbps && xbps-install -yu && xbps-install -y sudo bash grep curl git
-          useradd -G xbuilder -M builder
+          xbps-install -Syu || xbps-install -yu xbps
+          xbps-install -y tar curl
 
-      - name: Clone Void-Packages
+      - name: Clone Void-Packages and prepare
         run: |
-          mkdir /work && cd /work
+          cd ~
           git clone --depth 1 https://github.com/void-linux/void-packages.git
 
       - name: Clone Hyprland-Void repo and prepare
         run: |
-          cd /work
           git clone https://github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git
           cd ${{ env.REPO_NAME }}
-          cat common/shlibs >> /work/void-packages/common/shlibs
-          cp -r srcpkgs/* /work/void-packages/srcpkgs
+          cat common/shlibs >> ~/void-packages/common/shlibs
+          cp -r srcpkgs/* ~/void-packages/srcpkgs
 
-      - name: Prepare masterdir
+      - name: Create hostrepo and prepare masterdir
         run: |
-          chown -R builder:builder /work
-          cd /work/void-packages
-          sudo -Eu builder common/travis/set_mirror.sh &&
-          sudo -Eu builder common/travis/prepare.sh &&
+          cd ~/void-packages
+          ln -s "$(pwd)" /hostrepo &&
+          common/travis/set_mirror.sh &&
+          common/travis/prepare.sh &&
           common/travis/fetch-xtools.sh
 
-      - name: Export envs
-        run: |
-          echo "BUILD_ARGS=${{ env.BUILD_ARGS }}" >> "$GITHUB_ENV"
-          echo "SCRIPT_DIR=/work/${{ env.REPO_NAME }}/scripts" >> "$GITHUB_ENV"
+      # - name: Build Swayosd
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg swayosd)
 
-      # All declared individually for logging purposes
-      # Common Deps
       # - name: Build tomlplusplus
-      #   run: PACKAGE=tomlplusplus $SCRIPT_DIR/build-package
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg tomlplusplus)
 
       # - name: Build sdbus-cpp
-      #   run: PACKAGE=sdbus-cpp $SCRIPT_DIR/build-package
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg sdbus-cpp)
 
-      # # Normal Builds
       # - name: Build hyprutils
-      #   run: PACKAGE=hyprutils $SCRIPT_DIR/build-package
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprutils)
 
       # - name: Build hyprlang
-      #   run: PACKAGE=hyprlang $SCRIPT_DIR/build-package
-
-      # - name: Build hyprcursor
-      #   run: PACKAGE=hyprcursor $SCRIPT_DIR/build-package
-
-      # - name: Build hyprwayland-scanner
-      #   run: PACKAGE=hyprwayland-scanner $SCRIPT_DIR/build-package
-
-      # - name: Build aquamarine
-      #   run: PACKAGE=aquamarine $SCRIPT_DIR/build-package
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlang)
 
       # - name: Build hyprland
-      #   run: PACKAGE=hyprland $SCRIPT_DIR/build-package
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland)
 
       # - name: Build hyprland-protocols
-      #   run: PACKAGE=hyprland-protocols $SCRIPT_DIR/build-package
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprland-protocols)
 
       # - name: Build xdg-desktop-portal-hyprland
-      #   run: PACKAGE=xdg-desktop-portal-hyprland $SCRIPT_DIR/build-package
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg xdg-desktop-portal-hyprland)
+
+      # - name: Build hyprcursor
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprcursor)
+
+      # - name: Build hyprwayland-scanner
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprwayland-scanner)
 
       # - name: Build hypridle
-      #   run: PACKAGE=hypridle $SCRIPT_DIR/build-package
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hypridle)
 
       # - name: Build hyprlock
-      #   run: PACKAGE=hyprlock $SCRIPT_DIR/build-package
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprlock)
 
       # - name: Build hyprpaper
-      #   run: PACKAGE=hyprpaper $SCRIPT_DIR/build-package
-      
-      - name: Build zen-browser
-        run: PACKAGE=zen-browser $SCRIPT_DIR/build-package
+      #   run: (/hostrepo/xbps-src -j$(nproc) -s -H ~/hostdir pkg hyprpaper)
 
-      # Sometimes xbps-src builds a bunch of other junk I don't want to be liable for distributing
-      - name: Copy relevant packages to new directory for indexing
-        run: sudo -Eu builder $SCRIPT_DIR/index-packages
+      - name: Copy relevant packages to new directory to be packaged
+        run: |
+          mkdir ~/packages
+          # cp ~/hostdir/binpkgs/hypr*.xbps ~/packages
+          # cp ~/hostdir/binpkgs/xdg-desktop-portal-hyprland*.xbps ~/packages
+          # cp ~/hostdir/binpkgs/sdbus-cpp*.xbps ~/packages
+          # cp ~/hostdir/binpkgs/tomlplusplus*.xbps ~/packages
+          # cp ~/hostdir/binpkgs/sway*.xbps ~/packages
+          cp ~/hostdir/binpkgs/zen-browser*.xbps ~/packages
+          cd ~/packages
+          xbps-rindex -a *
 
-      # Retrieve the signing key from the separate private repository
       - name: Retrieve private key
         run: |
           cd ~
-          curl -O https://raw.githubusercontent.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/master/common/private.pem
+          curl -O https://raw.githubusercontent.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/main/common/private.pem
 
       - name: Sign repository
         run: |
           export XBPS_PASSPHRASE=${{ secrets.PRIVATE_PEM_PASSPHRASE }}
           xbps-rindex --privkey ~/private.pem --sign --signedby "${{ env.REPO_NAME }}-github-action" ~/packages
           xbps-rindex --privkey ~/private.pem --sign-pkg ~/packages/*.xbps
-      
 
       - name: Compress Packages
         run: |
           cd ~/packages
           ls -la
           tar -czvf ${{ env.PACKAGES_FILE }} *
-    
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.REPO_NAME }}
           path: ~/packages/${{ env.PACKAGES_FILE }}
+
+  # publish:
+  #   name: Pack and Publish
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: ${{ env.REPO_NAME }}
+  #         path: ~/
+
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+
+  #     - name: Configure Git
+  #       run: |
+  #         git config user.name "github-actions[bot]"
+  #         git config user.email "github-actions[bot]@users.noreply.github.com"
+
+  #     - name: Update or Create Repository Branch
+  #       run: |
+  #         if git ls-remote --exit-code --heads origin repository-x86_64-glibc; then
+  #           echo "Branch exists, deleting it"
+  #           git push origin -d repository-x86_64-glibc
+  #         else
+  #           echo "Branch does not exist, will create new"
+  #         fi
+  #         git switch --orphan repository-x86_64-glibc
+
+  #     - name: Extract and Add Packages
+  #       run: |
+  #         tar -xvf ~/${{ env.PACKAGES_FILE }} -C ./
+
+  #     - name: Commit and Push Changes
+  #       run: |
+  #         git add -A
+  #         git commit -m "Upload latest packages to repository"
+  #         git push origin repository-x86_64-glibc

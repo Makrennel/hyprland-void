@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-
-echo "Running: sudo -Eu builder /work/void-packages/xbps-src $BUILD_ARGS -j$(nproc) -s -H /work/hostdir pkg $PACKAGE"
-sudo -Eu builder /work/void-packages/xbps-src $BUILD_ARGS -j$(nproc) -s -H /work/hostdir pkg $PACKAGE
-

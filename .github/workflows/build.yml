@@ -1,0 +1,143 @@
+name: Build and Release Hyprland Packages
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    strategy:
+      max-parallel: 1
+      matrix:
+        # arch: [x86_64]
+        arch: [x86_64, x86_64-musl]
+    runs-on: ubuntu-22.04
+    env:
+      XBPS_ALLOW_RESTRICTED: "yes"
+      XBPS_TARGET_ARCH: ${{ matrix.arch }}
+      XBPS_PASSPHRASE: ${{ secrets.SIGN_PASS }}
+      REPO_OWNER: "${{ github.repository_owner }}"
+      REPO_NAME: "${{ github.event.repository.name }}"
+
+    steps:
+      - name: checkout ${{ env.REPO_NAME }}
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: ${{ env.REPO_NAME }}
+
+      - name: checkout void-packages
+        uses: actions/checkout@v4
+        with:
+          repository: void-linux/void-packages
+          ref: master
+          path: void-packages
+
+      - name: copy
+        run: |
+          cat ${{ env.REPO_NAME }}/common/shlibs >> void-packages/common/shlibs
+          cp -rv ${{ env.REPO_NAME }}/srcpkgs/* void-packages/srcpkgs
+
+      - name: prepare xbps-static
+        run: |
+          mkdir -p /opt/xbps
+          curl -LO http://repo-default.voidlinux.org/static/xbps-static-latest.x86_64-musl.tar.xz
+          tar xvf xbps-static-latest.x86_64-musl.tar.xz -C /opt/xbps
+          rm xbps-static-latest.x86_64-musl.tar.xz
+
+      - name: free space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+
+      - name: set path
+        run: |
+          echo "/opt/xbps/usr/bin/" >> $GITHUB_PATH
+
+      - name: setup binray bootstrap
+        working-directory: void-packages
+        run: |
+          ./xbps-src -m masterdir-${{ matrix.arch }} -A ${{ matrix.arch }} binary-bootstrap
+
+      # ---------------------------------------------------------------------
+
+      - name: build requirements
+        working-directory: void-packages
+        run: |
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} libtoml++
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} libspng
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} sdbus-cpp
+
+      # ---------------------------------------------------------------------
+
+      - name: build hyprland deps
+        working-directory: void-packages
+        run: |
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprutils
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprlang
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprcursor
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprgraphics
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprwayland-scanner
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} aquamarine
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprland-protocols
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} xdg-desktop-portal-hyprland
+
+      - name: build hyprland utils
+        working-directory: void-packages
+        run: |
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hypridle
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprlock
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprpaper
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprsunset
+
+      - name: build hyprland qt apps
+        working-directory: void-packages
+        run: |
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprland-qt-support
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprpolkitagent
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprsysteminfo
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprland-qtutils
+
+      - name: build hyprland
+        working-directory: void-packages
+        run: |
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} hyprland
+
+      - name: build swayosd
+        working-directory: void-packages
+        run: |
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} swayosd
+
+      - name: build rofi wayland
+        working-directory: void-packages
+        run: |
+          ./xbps-src pkg -j$(nproc) -m masterdir-${{ matrix.arch }} rofi-wayland
+
+      - name: sign
+        working-directory: void-packages/hostdir/binpkgs/
+        run: |
+          ls -la
+          echo "${{ secrets.PRIV_KEY }}" > private.pem
+          xbps-rindex --privkey private.pem --sign --signedby "${{ env.REPO_NAME }}-github-action" $PWD
+          xbps-rindex --privkey private.pem --sign-pkg *.xbps
+
+      - name: checksum
+        working-directory: void-packages/hostdir/binpkgs/
+        run: |
+          for file in *.xbps; do
+            sha256sum "$file" | cut -d ' ' -f 1 > "${file}.sha256sum"
+            sha512sum "$file" | cut -d ' ' -f 1 > "${file}.sha512sum"
+          done
+
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            void-packages/hostdir/binpkgs/*.xbps
+            void-packages/hostdir/binpkgs/*.sha256sum
+            void-packages/hostdir/binpkgs/*.sha512sum
+            void-packages/hostdir/binpkgs/*.sig2
+            void-packages/hostdir/binpkgs/*repodata
