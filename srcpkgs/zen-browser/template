@@ -1,0 +1,33 @@
+# Template file for 'zen-browser'
+pkgname=zen-browser
+version=1.8.2b
+revision=1
+only_for_archs="x86_64"
+wrksrc="${pkgname}-${version}"
+build_style=meta
+hostmakedepends="tar bzip2"
+short_desc="Minimalistic web browser"
+maintainer="soheyl sh <soheylsh1877@gmail.com>"
+license="MPL-2.0"
+homepage="https://www.zen-browser.app/"
+distfiles="https://github.com/zen-browser/desktop/archive/refs/tags/${version}.tar.gz"
+checksum=d236df1cc763a4cefd4d399edcc5a036d797fc7f1ce848938d6bea4fc863e2f0
+
+do_install() {
+		# Install the files
+		vmkdir usr/lib/zen-browser
+		vcopy * usr/lib/zen-browser
+
+		# link the binary
+		vmkdir usr/bin/
+		ln -s /usr/lib/zen-browser/zen ${DESTDIR}/usr/bin/
+}
+
+# Add the necessary dependencies if there are any
+depends="libX11 libXcomposite libXdamage libXext libXfixes libXt libXtst \
+libxkbcommon libxkbcommon-x11 libpng glib gtk+3"
+
+# Specify any optional dependencies
+# makedepends="" # Uncomment and set if necessary
+
+# This template assumes precompiled binaries, so you don't need to build from source.
