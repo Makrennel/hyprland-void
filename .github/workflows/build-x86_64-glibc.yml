@@ -73,45 +73,48 @@ jobs:
 
       # All declared individually for logging purposes
       # Common Deps
-      - name: Build tomlplusplus
-        run: PACKAGE=tomlplusplus $SCRIPT_DIR/build-package
+      # - name: Build tomlplusplus
+      #   run: PACKAGE=tomlplusplus $SCRIPT_DIR/build-package
 
-      - name: Build sdbus-cpp
-        run: PACKAGE=sdbus-cpp $SCRIPT_DIR/build-package
+      # - name: Build sdbus-cpp
+      #   run: PACKAGE=sdbus-cpp $SCRIPT_DIR/build-package
 
-      # Normal Builds
-      - name: Build hyprutils
-        run: PACKAGE=hyprutils $SCRIPT_DIR/build-package
+      # # Normal Builds
+      # - name: Build hyprutils
+      #   run: PACKAGE=hyprutils $SCRIPT_DIR/build-package
 
-      - name: Build hyprlang
-        run: PACKAGE=hyprlang $SCRIPT_DIR/build-package
+      # - name: Build hyprlang
+      #   run: PACKAGE=hyprlang $SCRIPT_DIR/build-package
 
-      - name: Build hyprcursor
-        run: PACKAGE=hyprcursor $SCRIPT_DIR/build-package
+      # - name: Build hyprcursor
+      #   run: PACKAGE=hyprcursor $SCRIPT_DIR/build-package
 
-      - name: Build hyprwayland-scanner
-        run: PACKAGE=hyprwayland-scanner $SCRIPT_DIR/build-package
+      # - name: Build hyprwayland-scanner
+      #   run: PACKAGE=hyprwayland-scanner $SCRIPT_DIR/build-package
 
-      - name: Build aquamarine
-        run: PACKAGE=aquamarine $SCRIPT_DIR/build-package
+      # - name: Build aquamarine
+      #   run: PACKAGE=aquamarine $SCRIPT_DIR/build-package
 
-      - name: Build hyprland
-        run: PACKAGE=hyprland $SCRIPT_DIR/build-package
+      # - name: Build hyprland
+      #   run: PACKAGE=hyprland $SCRIPT_DIR/build-package
 
-      - name: Build hyprland-protocols
-        run: PACKAGE=hyprland-protocols $SCRIPT_DIR/build-package
+      # - name: Build hyprland-protocols
+      #   run: PACKAGE=hyprland-protocols $SCRIPT_DIR/build-package
 
-      - name: Build xdg-desktop-portal-hyprland
-        run: PACKAGE=xdg-desktop-portal-hyprland $SCRIPT_DIR/build-package
+      # - name: Build xdg-desktop-portal-hyprland
+      #   run: PACKAGE=xdg-desktop-portal-hyprland $SCRIPT_DIR/build-package
 
-      - name: Build hypridle
-        run: PACKAGE=hypridle $SCRIPT_DIR/build-package
+      # - name: Build hypridle
+      #   run: PACKAGE=hypridle $SCRIPT_DIR/build-package
 
-      - name: Build hyprlock
-        run: PACKAGE=hyprlock $SCRIPT_DIR/build-package
+      # - name: Build hyprlock
+      #   run: PACKAGE=hyprlock $SCRIPT_DIR/build-package
 
-      - name: Build hyprpaper
-        run: PACKAGE=hyprpaper $SCRIPT_DIR/build-package
+      # - name: Build hyprpaper
+      #   run: PACKAGE=hyprpaper $SCRIPT_DIR/build-package
+      
+      - name: Build zen-browser
+        run: PACKAGE=zen-browser $SCRIPT_DIR/build-package
 
       # Sometimes xbps-src builds a bunch of other junk I don't want to be liable for distributing
       - name: Copy relevant packages to new directory for indexing
