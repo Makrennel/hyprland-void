@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+# We need to sign the packages with our private key so that they will be accepted by xbps remotely
+# See: https://docs.voidlinux.org/xbps/repositories/signing.html
+
+COMMAND="
+  xbps-rindex --privkey /work/private.pem --sign --signedby \"$REPO_NAME-github-action\" /work/packages
+  xbps-rindex --privkey /work/private.pem --sign-pkg /work/packages/*.xbps
+"
+
+echo "Running command: $COMMAND"
+sh -c "$COMMAND"
+

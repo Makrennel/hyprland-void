@@ -1,13 +1,19 @@
 #!/usr/bin/env sh
 
-mkdir /work/packages
+# Sometimes xbps-src builds a bunch of other junk I don't want to be liable for distributing
 
-cp /work/hostdir/binpkgs/aquamarine*.xbps /work/packages
-cp /work/hostdir/binpkgs/hypr*.xbps /work/packages
-cp /work/hostdir/binpkgs/xdg-desktop-portal-hyprland*.xbps /work/packages
-cp /work/hostdir/binpkgs/sdbus-cpp*.xbps /work/packages
-cp /work/hostdir/binpkgs/tomlplusplus*.xbps /work/packages
-
-cd /work/packages
-xbps-rindex -a *
+COMMAND="
+  mkdir /work/packages
+  
+  cp /work/hostdir/binpkgs/aquamarine*.xbps /work/packages
+  cp /work/hostdir/binpkgs/hypr*.xbps /work/packages
+  cp /work/hostdir/binpkgs/xdg-desktop-portal-hyprland*.xbps /work/packages
+  cp /work/hostdir/binpkgs/sdbus-cpp*.xbps /work/packages
+  cp /work/hostdir/binpkgs/tomlplusplus*.xbps /work/packages
+  
+  cd /work/packages
+  xbps-rindex -a *
+"
+echo "Running command: $COMMAND"
+sh -c "$COMMAND"
 

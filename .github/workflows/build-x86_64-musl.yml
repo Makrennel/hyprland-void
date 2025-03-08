@@ -9,7 +9,8 @@ on:
 env:
   REPO_OWNER: "${{ github.repository_owner }}"
   REPO_NAME: "${{ github.event.repository.name }}"
-  ARCH_NAME: "x86_64-musl"
+  RESULT_NAME: "x86_64-musl"
+  TARGET_ARCH: "x86_64-musl"
   BUILD_ARGS: ""
 
 jobs:
@@ -38,6 +39,17 @@ jobs:
             }
 
     steps:
+      - name: Export environment variables
+        run: |
+          echo "REPO_OWNER=${{ env.REPO_OWNER }}" >> "$GITHUB_ENV"
+          echo "REPO_NAME=${{ env.REPO_NAME }}" >> "$GITHUB_ENV"
+          echo "RESULT_NAME=${{ env.RESULT_NAME }}" >> "$GITHUB_ENV"
+          echo "BUILD_ARGS=${{ env.BUILD_ARGS }}" >> "$GITHUB_ENV"
+          echo "SCRIPT_DIR=/work/${{ env.REPO_NAME }}/scripts" >> "$GITHUB_ENV"
+          echo "XBPS_PASSPHRASE=${{ secrets.PRIVATE_PEM_PASSPHRASE }}" >> "$GITHUB_ENV"
+          echo "PEM_PAT_TOKEN=${{ secrets.PEM_PAT }}" >> "$GITHUB_ENV"
+          echo "ACCESS_GIT_TOKEN=${{ secrets.ACCESS_GIT }}" >> "$GITHUB_ENV"
+
       - name: Prepare container and create a non-root user
         run: |
           mkdir -p /etc/xbps.d && cp /usr/share/xbps.d/*-repository-*.conf /etc/xbps.d/
@@ -45,41 +57,21 @@ jobs:
           xbps-install -Syu xbps && xbps-install -yu && xbps-install -y sudo bash grep curl git
           useradd -G xbuilder -M builder
 
-      - name: Clone Void-Packages
+      - name: Clone hyprland-void repo
         run: |
           mkdir /work && cd /work
-          git clone --depth 1 https://github.com/void-linux/void-packages.git
+          git clone https://github.com/$REPO_OWNER/$REPO_NAME.git
 
-      - name: Clone Hyprland-Void repo and prepare
-        run: |
-          cd /work
-          git clone https://github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git
-          cd ${{ env.REPO_NAME }}
-          cat common/shlibs >> /work/void-packages/common/shlibs
-          cp -r srcpkgs/* /work/void-packages/srcpkgs
-
-      - name: Prepare masterdir
-        run: |
-          chown -R builder:builder /work
-          cd /work/void-packages
-          sudo -Eu builder common/travis/set_mirror.sh &&
-          sudo -Eu builder common/travis/prepare.sh &&
-          common/travis/fetch-xtools.sh
-
-      - name: Export envs
-        run: |
-          echo "BUILD_ARGS=${{ env.BUILD_ARGS }}" >> "$GITHUB_ENV"
-          echo "SCRIPT_DIR=/work/${{ env.REPO_NAME }}/scripts" >> "$GITHUB_ENV"
+      - name: Prepare
+        run: $SCRIPT_DIR/clone-and-prepare
 
       # All declared individually for logging purposes
-      # Common Deps
       - name: Build tomlplusplus
         run: PACKAGE=tomlplusplus $SCRIPT_DIR/build-package
 
       - name: Build sdbus-cpp
         run: PACKAGE=sdbus-cpp $SCRIPT_DIR/build-package
 
-      # Normal Builds
       - name: Build hyprutils
         run: PACKAGE=hyprutils $SCRIPT_DIR/build-package
 
@@ -113,37 +105,18 @@ jobs:
       - name: Build hyprpaper
         run: PACKAGE=hyprpaper $SCRIPT_DIR/build-package
 
-      # Sometimes xbps-src builds a bunch of other junk I don't want to be liable for distributing
+      - name: Export XBPS_TARGET_ARCH
+        run: echo "XBPS_TARGET_ARCH=${{ env.TARGET_ARCH }}" >> "$GITHUB_ENV"
+
       - name: Copy relevant packages to new directory for indexing
         run: sudo -Eu builder $SCRIPT_DIR/index-packages
 
-      # Retrieve the signing key from the separate private repository
       - name: Retrieve private key
-        run: |
-          cd /work
-          sudo -Eu builder curl -H 'Authorization: token ${{ secrets.PEM_PAT }}' \
-            -H 'Accept: application/vnd.github.v3.raw' \
-            -O -L https://api.github.com/repos/${{ env.REPO_OWNER }}/hyprland-void-private-pem/contents/private.pem
+        run: cd /work && sudo -Eu builder $SCRIPT_DIR/retrieve-private-key
 
-      # We need to sign the packages with our private key so that they will be accepted by xbps remotely
-      # See: https://docs.voidlinux.org/xbps/repositories/signing.html
       - name: Sign package repository
-        run: |
-          export XBPS_PASSPHRASE=${{ secrets.PRIVATE_PEM_PASSPHRASE }}
-          sudo -Eu builder xbps-rindex --privkey /work/private.pem --sign --signedby "${{ env.REPO_NAME }}-github-action" /work/packages
-          sudo -Eu builder xbps-rindex --privkey /work/private.pem --sign-pkg /work/packages/*.xbps
+        run: sudo -Eu builder $SCRIPT_DIR/sign-packages
 
-      # We'll blow the size of the repository up very quickly if we do not delete old iterations of the repository
-      - name: Delete old repository and recreate with new packages
-        run: |
-          cd /work/${{ env.REPO_NAME }}
-          sudo -Eu builder git config user.name "github-actions[bot]"
-          sudo -Eu builder git config user.email "github-actions[bot]@users.noreply.github.com"
-          sudo -Eu builder git push https://${{ env.REPO_OWNER }}:${{ secrets.ACCESS_GIT }}@github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git -d repository-${{ env.ARCH_NAME }}
-          sudo -Eu builder git switch --orphan repository-${{ env.ARCH_NAME }}
-          sudo -Eu builder cp /work/packages/* ./
-          sudo -Eu builder git add .
-          sudo -Eu builder git commit -m "Upload latest packages to repository"
-          sudo -Eu builder git push https://${{ env.REPO_OWNER }}:${{ secrets.ACCESS_GIT }}@github.com/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}.git repository-${{ env.ARCH_NAME }}
-
+      - name: Push new packages to binary repository
+        run: cd /work/$REPO_NAME && sudo -Eu builder $SCRIPT_DIR/push-repository
 

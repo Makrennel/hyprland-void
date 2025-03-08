@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+
+COMMAND="
+  cd /work
+  git clone --depth 1 https://github.com/void-linux/void-packages.git
+
+  cd /work/$REPO_NAME
+  cat common/shlibs >> /work/void-packages/common/shlibs
+  cp -r srcpkgs/* /work/void-packages/srcpkgs
+
+  chown -R builder:builder /work
+
+  cd /work/void-packages
+  sudo -Eu builder common/travis/set_mirror.sh &&
+  sudo -Eu builder common/travis/prepare.sh &&
+  common/travis/fetch-xtools.sh
+"
+
+echo "Running command: $COMMAND"
+sh -c "$COMMAND"
+
