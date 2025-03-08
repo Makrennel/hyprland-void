@@ -127,28 +127,6 @@ jobs:
           sudo -Eu builder curl -H 'Authorization: token ${{ secrets.PEM_PAT }}' \
             -H 'Accept: application/vnd.github.v3.raw' \
             -O -L https://api.github.com/repos/${{ env.REPO_OWNER }}/hyprland-void-private-pem/contents/private.pem
-          sudo chmod 600 /work/private.pem
-          
-          # Debugging: نمایش محتوای کلید برای بررسی دانلود صحیح
-          echo "=== Checking private.pem content ==="
-          cat /work/private.pem
-          
-          # اگر کلید اشتباه دانلود شده باشد، عملیات را متوقف کن
-          if ! grep -q "BEGIN RSA PRIVATE KEY" /work/private.pem; then
-            echo "❌ Invalid private key downloaded!"
-            exit 1
-          fi
-
-      - name: Install file command
-        run: sudo apt-get update && sudo apt-get install -y file
-
-      - name: Check private key format
-        run: |
-          ls -lah /work/private.pem
-          file /work/private.pem
-          openssl rsa -in /work/private.pem -check
-
-
 
       # We need to sign the packages with our private key so that they will be accepted by xbps remotely
       # See: https://docs.voidlinux.org/xbps/repositories/signing.html
