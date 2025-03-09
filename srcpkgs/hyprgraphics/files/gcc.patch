@@ -1,0 +1,53 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 492db50..dfa9873 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -38,6 +38,7 @@ file(GLOB_RECURSE SRCFILES CONFIGURE_DEPENDS "src/*.cpp" "include/*.hpp")
+ file(GLOB_RECURSE PUBLIC_HEADERS CONFIGURE_DEPENDS "include/*.hpp")
+ 
+ find_package(PkgConfig REQUIRED)
++find_package(fmt REQUIRED)
+ pkg_check_modules(
+   deps
+   REQUIRED
+@@ -70,13 +71,13 @@ target_include_directories(
+   PRIVATE "./src")
+ set_target_properties(hyprgraphics PROPERTIES VERSION ${HYPRGRAPHICS_VERSION}
+                                               SOVERSION 0)
+-target_link_libraries(hyprgraphics PkgConfig::deps ${JXL_LIBRARIES})
++target_link_libraries(hyprgraphics PkgConfig::deps fmt::fmt ${JXL_LIBRARIES})
+ 
+ # tests
+ add_custom_target(tests)
+ 
+ add_executable(hyprgraphics_image "tests/image.cpp")
+-target_link_libraries(hyprgraphics_image PRIVATE hyprgraphics PkgConfig::deps)
++target_link_libraries(hyprgraphics_image PRIVATE hyprgraphics PkgConfig::deps fmt::fmt)
+ add_test(
+   NAME "Image"
+   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests
+diff --git a/tests/image.cpp b/tests/image.cpp
+index 42a1082..417126d 100644
+--- a/tests/image.cpp
++++ b/tests/image.cpp
+@@ -1,4 +1,5 @@
+-#include <print>
++#include <fmt/core.h>
++#include <algorithm>
+ #include <format>
+ #include <filesystem>
+ #include <hyprgraphics/image/Image.hpp>
+@@ -10,11 +11,11 @@ bool tryLoadImage(const std::string& path) {
+     auto image = CImage(path);
+ 
+     if (!image.success()) {
+-        std::println("Failed to load {}: {}", path, image.getError());
++        fmt::print("Failed to load {}: {}", path, image.getError());
+         return false;
+     }
+ 
+-    std::println("Loaded {} successfully: Image is {}x{} of type {}", path, image.cairoSurface()->size().x, image.cairoSurface()->size().y, image.getMime());
++    fmt::print("Loaded {} successfully: Image is {}x{} of type {}", path, image.cairoSurface()->size().x, image.cairoSurface()->size().y, image.getMime());
+ 
+     const auto TEST_DIR = std::filesystem::current_path().string() + "/test_output";
+ 

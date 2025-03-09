@@ -1,0 +1,171 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6cea40d..f692808 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
+ find_package(Qt6 6.5 REQUIRED COMPONENTS Widgets Quick QuickControls2)
+ find_package(PkgConfig REQUIRED)
++find_package(fmt REQUIRED)
+ set(CMAKE_CXX_STANDARD 23)
+ 
+ pkg_check_modules(
+@@ -43,7 +44,7 @@ qt_add_qml_module(hyprpolkitagent
+ )
+ 
+ target_link_libraries(hyprpolkitagent
+-    PRIVATE Qt6::Widgets Qt6::Quick Qt6::Gui Qt6::QuickControls2 PkgConfig::deps
++    PRIVATE Qt6::Widgets Qt6::Quick Qt6::Gui Qt6::QuickControls2 PkgConfig::deps fmt::fmt
+ )
+ 
+ include(GNUInstallDirs)
+@@ -54,8 +55,8 @@ configure_file(assets/hyprpolkitagent-dbus.in hyprpolkitagent-dbus.service @ONLY
+ 
+ install(TARGETS hyprpolkitagent 
+         DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})
+-install(FILES ${CMAKE_BINARY_DIR}/hyprpolkitagent.service
+-        DESTINATION "lib/systemd/user")
++# install(FILES ${CMAKE_BINARY_DIR}/hyprpolkitagent.service
++#         DESTINATION "lib/systemd/user")
+ install(FILES ${CMAKE_BINARY_DIR}/hyprpolkitagent-dbus.service
+         DESTINATION ${CMAKE_INSTALL_DATADIR}/dbus-1/services
+         RENAME hyprpolkitagent.service)
+diff --git a/src/core/Agent.cpp b/src/core/Agent.cpp
+index e482af0..09d54e1 100644
+--- a/src/core/Agent.cpp
++++ b/src/core/Agent.cpp
+@@ -1,7 +1,7 @@
+ #define POLKIT_AGENT_I_KNOW_API_IS_SUBJECT_TO_CHANGE 1
+ 
+ #include <polkitagent/polkitagent.h>
+-#include <print>
++#include <fmt/core.h>
+ #include <QtCore/QString>
+ using namespace Qt::Literals::StringLiterals;
+ 
+@@ -51,11 +51,11 @@ void CAgent::initAuthPrompt() {
+     resetAuthState();
+ 
+     if (!listener.session.inProgress) {
+-        std::print(stderr, "INTERNAL ERROR: Spawning qml prompt but session isn't in progress\n");
++        fmt::print(stderr, "INTERNAL ERROR: Spawning qml prompt but session isn't in progress\n");
+         return;
+     }
+ 
+-    std::print("Spawning qml prompt\n");
++    fmt::print("Spawning qml prompt\n");
+ 
+     authState.authing = true;
+ 
+@@ -81,7 +81,7 @@ void CAgent::submitResultThreadSafe(const std::string& result) {
+ 
+     const bool PASS = result.starts_with("auth:");
+ 
+-    std::print("Got result from qml: {}\n", PASS ? "auth:**PASSWORD**" : result);
++    fmt::print("Got result from qml: {}\n", PASS ? "auth:**PASSWORD**" : result);
+ 
+     if (PASS)
+         listener.submitPassword(result.substr(result.find(":") + 1).c_str());
+diff --git a/src/core/PolkitListener.cpp b/src/core/PolkitListener.cpp
+index 52092ca..31bdd37 100644
+--- a/src/core/PolkitListener.cpp
++++ b/src/core/PolkitListener.cpp
+@@ -6,7 +6,7 @@
+ #include "Agent.hpp"
+ #include <polkitqt1-agent-session.h>
+ 
+-#include <print>
++#include <fmt/core.h>
+ 
+ using namespace PolkitQt1::Agent;
+ 
+@@ -17,19 +17,19 @@ CPolkitListener::CPolkitListener(QObject* parent) : Listener(parent) {
+ void CPolkitListener::initiateAuthentication(const QString& actionId, const QString& message, const QString& iconName, const PolkitQt1::Details& details, const QString& cookie,
+                                              const PolkitQt1::Identity::List& identities, AsyncResult* result) {
+ 
+-    std::print("> New authentication session\n");
++    fmt::print("> New authentication session\n");
+ 
+     if (session.inProgress) {
+         result->setError("Authentication in progress");
+         result->setCompleted();
+-        std::print("> REJECTING: Another session present\n");
++        fmt::print("> REJECTING: Another session present\n");
+         return;
+     }
+ 
+     if (identities.isEmpty()) {
+         result->setError("No identities, this is a problem with your system configuration.");
+         result->setCompleted();
+-        std::print("> REJECTING: No idents\n");
++        fmt::print("> REJECTING: No idents\n");
+         return;
+     }
+ 
+@@ -61,12 +61,12 @@ void CPolkitListener::reattempt() {
+ }
+ 
+ bool CPolkitListener::initiateAuthenticationFinish() {
+-    std::print("> initiateAuthenticationFinish()\n");
++    fmt::print("> initiateAuthenticationFinish()\n");
+     return true;
+ }
+ 
+ void CPolkitListener::cancelAuthentication() {
+-    std::print("> cancelAuthentication()\n");
++    fmt::print("> cancelAuthentication()\n");
+ 
+     session.cancelled = true;
+ 
+@@ -74,11 +74,11 @@ void CPolkitListener::cancelAuthentication() {
+ }
+ 
+ void CPolkitListener::request(const QString& request, bool echo) {
+-    std::print("> PKS request: {} echo: {}\n", request.toStdString(), echo);
++    fmt::print("> PKS request: {} echo: {}\n", request.toStdString(), echo);
+ }
+ 
+ void CPolkitListener::completed(bool gainedAuthorization) {
+-    std::print("> PKS completed: {}\n", gainedAuthorization ? "Auth successful" : "Auth unsuccessful");
++    fmt::print("> PKS completed: {}\n", gainedAuthorization ? "Auth successful" : "Auth unsuccessful");
+ 
+     session.gainedAuth = gainedAuthorization;
+ 
+@@ -89,24 +89,24 @@ void CPolkitListener::completed(bool gainedAuthorization) {
+ }
+ 
+ void CPolkitListener::showError(const QString& text) {
+-    std::print("> PKS showError: {}\n", text.toStdString());
++    fmt::print("> PKS showError: {}\n", text.toStdString());
+ 
+     if (g_pAgent->authState.qmlIntegration)
+         g_pAgent->authState.qmlIntegration->setError(text);
+ }
+ 
+ void CPolkitListener::showInfo(const QString& text) {
+-    std::print("> PKS showInfo: {}\n", text.toStdString());
++    fmt::print("> PKS showInfo: {}\n", text.toStdString());
+ }
+ 
+ void CPolkitListener::finishAuth() {
+     if (!session.inProgress) {
+-        std::print("> finishAuth: ODD. !session.inProgress\n");
++        fmt::print("> finishAuth: ODD. !session.inProgress\n");
+         return;
+     }
+ 
+     if (!session.gainedAuth && !session.cancelled) {
+-        std::print("> finishAuth: Did not gain auth. Reattempting.\n");
++        fmt::print("> finishAuth: Did not gain auth. Reattempting.\n");
+         if (g_pAgent->authState.qmlIntegration)
+             g_pAgent->authState.qmlIntegration->blockInput(false);
+         session.session->deleteLater();
+@@ -114,7 +114,7 @@ void CPolkitListener::finishAuth() {
+         return;
+     }
+ 
+-    std::print("> finishAuth: Gained auth, cleaning up.\n");
++    fmt::print("> finishAuth: Gained auth, cleaning up.\n");
+ 
+     session.inProgress = false;
+ 

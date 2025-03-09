@@ -1,0 +1,21 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index bde1540..da424fa 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -47,6 +47,7 @@ add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wno-unused-value
+ 
+ find_package(Threads REQUIRED)
+ find_package(PkgConfig REQUIRED)
++find_package(fmt REQUIRED)
+ find_package(hyprwayland-scanner 0.4.0 REQUIRED)
+ 
+ pkg_check_modules(
+@@ -120,7 +121,7 @@ set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+ include(CPack)
+ 
+-target_link_libraries(hyprpaper PkgConfig::deps)
++target_link_libraries(hyprpaper PkgConfig::deps fmt::fmt)
+ 
+ target_link_libraries(
+   hyprpaper

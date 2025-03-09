@@ -1,16 +1,56 @@
-# Template file for 'sdbus-cpp'
+# Template file for 'sdbus-cpp'.
 pkgname=sdbus-cpp
 version=2.0.0
 revision=1
 build_style=cmake
-hostmakedepends="cmake meson ninja pkgconf git m4 rsync gperf"
-makedepends="libmount-devel libcap-devel libelogind elogind-devel elogind"
-depends="libmount libcap libelogind elogind-devel elogind"
-short_desc="High-level C++ D-Bus library to provide API in modern C++"
+configure_args=" -DSDBUSCPP_BUILD_LIBSYSTEMD=OFF -DSDBUSCPP_BUILD_DOCS=ON"
+hostmakedepends="cmake pkg-config"
+makedepends="libelogind elogind-devel"
+depends="elogind"
+short_desc="High-level C++ D-Bus library for Linux designed to provide easy-to-use yet powerful API in modern C++"
 maintainer="Makrennel <makrommel@protonmail.ch>"
-license="LGPL-2.1-only"
+license="LGPL-2.1"
 homepage="https://github.com/Kistler-Group/sdbus-cpp"
-changelog="https://github.com/Kistler-Group/${pkgname}/releases"
-distfiles="https://github.com/Kistler-Group/${pkgname}/archive/refs/tags/v${version}.tar.gz"
-checksum=88af4569161a0d0192f0f4a94582a1af4e75722499d06984fb7f91f638f5afb3
+distfiles="https://github.com/Kistler-Group/sdbus-cpp/archive/refs/tags/v${version}.tar.gz"
+checksum="88af4569161a0d0192f0f4a94582a1af4e75722499d06984fb7f91f638f5afb3"
 
+build_options="clang gcc"
+build_options_default="gcc"
+desc_option_clang="Use clang to build"
+desc_option_gcc="Use gcc to build"
+
+if [ "$build_option_gcc" ]; then
+   hostmakedepends+=" gcc"
+   makedepends+=" libgcc-devel fmt-devel"
+fi
+
+if [ "$build_option_clang" ]; then
+   hostmakedepends+=" clang19"
+   makedepends+=" libcxx libcxx-devel libcxxabi libcxxabi-devel"
+fi
+
+pre_configure() {
+   if [ "$build_option_clang" ]; then
+      export CC=clang
+      export CXX=clang++
+
+      configure_args+=" -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_FLAGS=-stdlib=libc++"
+   fi
+}
+
+post_install() {
+   vlicense COPYING
+   vlicense COPYING-LGPL-Exception
+}
+
+sdbus-cpp-devel_package() {
+   depends="sdbus-cpp-${version}_${revision}"
+   short_desc+=" - C++ development files"
+
+   pkg_install() {
+      vmove usr/lib/cmake
+      vmove usr/lib/pkgconfig
+      vmove usr/include
+      vmove "usr/lib/*.so"
+   }
+}

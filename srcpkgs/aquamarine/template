@@ -1,15 +1,68 @@
 # Template file for 'aquamarine'
 pkgname=aquamarine
-version=0.4.4
-revision=2
+version=0.7.2
+revision=1
 build_style=cmake
-hostmakedepends="cmake pkgconf hyprwayland-scanner"
-makedepends="hyprutils MesaLib-devel hyprwayland-scanner libseat-devel libinput-devel wayland-devel wayland-protocols pixman-devel libdisplay-info-devel hwids"
+configure_args=" --no-warn-unused-cli -DCMAKE_BUILD_TYPE=Release"
+hostmakedepends="cmake pkg-config"
+makedepends="
+	hyprutils-devel
+	hyprwayland-scanner
+	hwids
+	libdisplay-info-devel
+	libdrm-devel
+	libgbm-devel
+	libglvnd-devel
+	libinput-devel
+	libseat-devel
+	libudev-devel
+	pixman-devel
+	wayland-devel
+	wayland-protocols
+"
 short_desc="Aquamarine is a very light linux rendering backend library"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="LGPL-3.0-only"
 homepage="https://hyprland.org/hyprlang/index.html"
 changelog="https://github.com/hyprwm/aquamarine/releases"
 distfiles="https://github.com/hyprwm/aquamarine/archive/refs/tags/v${version}.tar.gz"
-checksum=2ac672bce27ac8a2f2d236582d49a2b6bbe243e9a7a5d06881e636607e897110
+checksum="822ce38345bc4c1b95966c79ee72ff18d753aa923c83e9aa64e9d82eebf55a38"
 
+build_options="clang gcc"
+build_options_default="gcc"
+desc_option_clang="Use clang to build"
+desc_option_gcc="Use gcc to build"
+
+if [ "$build_option_gcc" ]; then
+   hostmakedepends+=" gcc"
+   makedepends+=" libgcc-devel fmt-devel"
+fi
+
+if [ "$build_option_clang" ]; then
+   hostmakedepends+=" clang19"
+   makedepends+=" libcxx libcxx-devel libcxxabi libcxxabi-devel"
+fi
+
+pre_configure() {
+   if [ "$build_option_clang" ]; then
+      export CC=clang
+      export CXX=clang++
+
+      configure_args+=" -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_FLAGS=-stdlib=libc++"
+   fi
+}
+
+post_install() {
+   vlicense LICENSE
+}
+
+aquamarine-devel_package() {
+   depends="aquamarine-${version}_${revision}"
+   short_desc+=" - development files"
+
+   pkg_install() {
+      vmove usr/include
+      vmove "usr/lib/*.so"
+      vmove usr/lib/pkgconfig
+   }
+}

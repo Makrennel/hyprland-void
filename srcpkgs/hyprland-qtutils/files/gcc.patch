@@ -1,0 +1,211 @@
+diff --git a/utils/dialog/CMakeLists.txt b/utils/dialog/CMakeLists.txt
+index ad7ae44..5611a34 100644
+--- a/utils/dialog/CMakeLists.txt
++++ b/utils/dialog/CMakeLists.txt
+@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
+ find_package(Qt6 6.5 REQUIRED COMPONENTS Widgets Quick QuickControls2 WaylandClient)
+ find_package(PkgConfig REQUIRED)
++find_package(fmt REQUIRED)
+ 
+ pkg_check_modules(hyprutils REQUIRED IMPORTED_TARGET hyprutils)
+ 
+@@ -24,7 +25,7 @@ qt_add_qml_module(hyprland-dialog
+ )
+ 
+ target_link_libraries(hyprland-dialog PRIVATE
+-    Qt6::Widgets Qt6::QuickControls2 Qt6::WaylandClientPrivate PkgConfig::hyprutils
++    Qt6::Widgets Qt6::QuickControls2 Qt6::WaylandClientPrivate PkgConfig::hyprutils fmt::fmt
+ )
+ 
+ 
+diff --git a/utils/dialog/Dialog.cpp b/utils/dialog/Dialog.cpp
+index 8b161c7..73465e2 100644
+--- a/utils/dialog/Dialog.cpp
++++ b/utils/dialog/Dialog.cpp
+@@ -1,5 +1,5 @@
+ #include "Dialog.hpp"
+-#include <print>
++#include <fmt/core.h>
+ #include <hyprutils/string/String.hpp>
+ using namespace Hyprutils::String;
+ 
+@@ -8,6 +8,6 @@ CDialog::CDialog(QObject* parent) : QObject(parent) {
+ }
+ 
+ void CDialog::onButtonPress(QString buttonName) {
+-    std::print("{}\n", trim(buttonName.toStdString()));
++    fmt::print("{}\n", trim(buttonName.toStdString()));
+     exit(0);
+ }
+diff --git a/utils/dialog/main.cpp b/utils/dialog/main.cpp
+index 7fd3c75..b15f0ad 100644
+--- a/utils/dialog/main.cpp
++++ b/utils/dialog/main.cpp
+@@ -1,6 +1,6 @@
+ #include "Dialog.hpp"
+ #include <hyprutils/string/VarList.hpp>
+-#include <print>
++#include <fmt/core.h>
+ #include <qapplication.h>
+ #include <qqmlapplicationengine.h>
+ #include <qquickstyle.h>
+@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
+ 
+         if (arg == "--title") {
+             if (i + 1 >= argc) {
+-                std::print(stderr, "--title requires a parameter\n");
++                fmt::print(stderr, "--title requires a parameter\n");
+                 return 1;
+             }
+ 
+@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
+ 
+         if (arg == "--apptitle") {
+             if (i + 1 >= argc) {
+-                std::print(stderr, "--apptitle requires a parameter\n");
++                fmt::print(stderr, "--apptitle requires a parameter\n");
+                 return 1;
+             }
+ 
+@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
+ 
+         if (arg == "--text") {
+             if (i + 1 >= argc) {
+-                std::print(stderr, "--text requires a parameter\n");
++                fmt::print(stderr, "--text requires a parameter\n");
+                 return 1;
+             }
+ 
+@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
+ 
+         if (arg == "--buttons") {
+             if (i + 1 >= argc) {
+-                std::print(stderr, "--buttons requires a parameter\n");
++                fmt::print(stderr, "--buttons requires a parameter\n");
+                 return 1;
+             }
+ 
+@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
+             continue;
+         }
+ 
+-        std::print(stderr, "invalid arg {}\n", argv[i]);
++        fmt::print(stderr, "invalid arg {}\n", argv[i]);
+         return 1;
+     }
+ 
+diff --git a/utils/donate-screen/CMakeLists.txt b/utils/donate-screen/CMakeLists.txt
+index cad04e6..9d9ff0f 100644
+--- a/utils/donate-screen/CMakeLists.txt
++++ b/utils/donate-screen/CMakeLists.txt
+@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
+ find_package(Qt6 6.5 REQUIRED COMPONENTS Widgets Quick QuickControls2 WaylandClient)
+ find_package(PkgConfig REQUIRED)
++find_package(fmt REQUIRED)
+ 
+ pkg_check_modules(hyprutils REQUIRED IMPORTED_TARGET hyprutils)
+ 
+@@ -24,7 +25,7 @@ qt_add_qml_module(hyprland-donate-screen
+ )
+ 
+ target_link_libraries(hyprland-donate-screen PRIVATE
+-    Qt6::Widgets Qt6::QuickControls2 Qt6::WaylandClientPrivate PkgConfig::hyprutils
++    Qt6::Widgets Qt6::QuickControls2 Qt6::WaylandClientPrivate PkgConfig::hyprutils fmt::fmt
+ )
+ 
+ 
+diff --git a/utils/donate-screen/DonateScreen.cpp b/utils/donate-screen/DonateScreen.cpp
+index 66c3ac5..05e3b29 100644
+--- a/utils/donate-screen/DonateScreen.cpp
++++ b/utils/donate-screen/DonateScreen.cpp
+@@ -1,6 +1,6 @@
+ #include "DonateScreen.hpp"
+ 
+-#include <print>
++#include <fmt/core.h>
+ #include <QDesktopServices>
+ 
+ #include <hyprutils/string/String.hpp>
+diff --git a/utils/donate-screen/main.cpp b/utils/donate-screen/main.cpp
+index 48f8ca1..258c06a 100644
+--- a/utils/donate-screen/main.cpp
++++ b/utils/donate-screen/main.cpp
+@@ -1,6 +1,6 @@
+ #include "DonateScreen.hpp"
+ #include <hyprutils/string/VarList.hpp>
+-#include <print>
++#include <fmt/core.h>
+ #include <qapplication.h>
+ #include <qqmlapplicationengine.h>
+ #include <qquickstyle.h>
+diff --git a/utils/update-screen/CMakeLists.txt b/utils/update-screen/CMakeLists.txt
+index 17d2096..e43486c 100644
+--- a/utils/update-screen/CMakeLists.txt
++++ b/utils/update-screen/CMakeLists.txt
+@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
+ find_package(Qt6 6.5 REQUIRED COMPONENTS Widgets Quick QuickControls2 WaylandClient)
+ find_package(PkgConfig REQUIRED)
++find_package(fmt REQUIRED)
+ 
+ pkg_check_modules(hyprutils REQUIRED IMPORTED_TARGET hyprutils)
+ 
+@@ -26,7 +27,7 @@ qt_add_qml_module(hyprland-update-screen
+ )
+ 
+ target_link_libraries(hyprland-update-screen PRIVATE
+-    Qt6::Widgets Qt6::QuickControls2 Qt6::WaylandClientPrivate PkgConfig::hyprutils
++    Qt6::Widgets Qt6::QuickControls2 Qt6::WaylandClientPrivate PkgConfig::hyprutils fmt::fmt
+ )
+ 
+ 
+diff --git a/utils/update-screen/UpdateScreen.cpp b/utils/update-screen/UpdateScreen.cpp
+index 71ddb67..d1a287d 100644
+--- a/utils/update-screen/UpdateScreen.cpp
++++ b/utils/update-screen/UpdateScreen.cpp
+@@ -1,6 +1,6 @@
+ #include "UpdateScreen.hpp"
+ 
+-#include <print>
++#include <fmt/core.h>
+ #include <QDesktopServices>
+ 
+ #include <hyprutils/string/String.hpp>
+diff --git a/utils/update-screen/main.cpp b/utils/update-screen/main.cpp
+index 6885efa..11a5bb7 100644
+--- a/utils/update-screen/main.cpp
++++ b/utils/update-screen/main.cpp
+@@ -1,6 +1,6 @@
+ #include "UpdateScreen.hpp"
+ #include <hyprutils/string/VarList.hpp>
+-#include <print>
++#include <fmt/core.h>
+ #include <qapplication.h>
+ #include <qqmlapplicationengine.h>
+ #include <qquickstyle.h>
+@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
+ 
+         if (arg == "--new-version") {
+             if (i + 1 >= argc) {
+-                std::println(stderr, "--new-version requires a parameter");
++                fmt::print(stderr, "--new-version requires a parameter");
+                 return 1;
+             }
+ 
+@@ -31,12 +31,12 @@ int main(int argc, char* argv[]) {
+             continue;
+         }
+ 
+-        std::println(stderr, "invalid arg {}", argv[i]);
++        fmt::print(stderr, "invalid arg {}", argv[i]);
+         return 1;
+     }
+ 
+     if (dialog->newVersion.isEmpty()) {
+-        std::println(stderr, "missing --new-version");
++        fmt::print(stderr, "missing --new-version");
+         return 1;
+     }
+ 

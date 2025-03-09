@@ -1,17 +1,17 @@
-# Template file for 'hyprwayland-scanner'
-pkgname=hyprwayland-scanner
-version=0.4.4
+# Template file for 'glaze'
+pkgname=glaze
+version=5.0.0
 revision=1
 build_style=cmake
-configure_args=" --no-warn-unused-cli -DCMAKE_BUILD_TYPE=Release"
+configure_args=" -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=23"
 hostmakedepends="cmake pkg-config"
-makedepends="pugixml-devel"
-short_desc="Hyprland's implementation of wayland-scanner in/for C++"
+makedepends="libsanitizer-devel"
+short_desc="A short description max 72 chars"
 maintainer="Makrennel <makrommel@protonmail.ch>"
-license="BSD-3-Clause"
-homepage="https://github.com/hyprwm/hyprwayland-scanner"
-distfiles="https://github.com/hyprwm/hyprwayland-scanner/archive/refs/tags/v${version}.tar.gz"
-checksum="ac73f626019f8d819ff79a5fca06ce4768ce8a3bded6f48c404445f3afaa25ac"
+license="GPL-3.0-or-later"
+homepage="https://github.com/stephenberry/glaze"
+distfiles="https://github.com/stephenberry/glaze/archive/refs/tags/v${version}.tar.gz"
+checksum="37e4ab809f18c5497a35481f347c1ed63761324644e358d92a7a11fe647fd44a"
 
 build_options="clang gcc"
 build_options_default="gcc"
@@ -35,8 +35,4 @@ pre_configure() {
 
       configure_args+=" -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_FLAGS=-stdlib=libc++"
    fi
-}
-
-post_install() {
-   vlicense LICENSE
 }

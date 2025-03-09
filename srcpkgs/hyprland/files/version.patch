@@ -1,0 +1,25 @@
+diff --git a/scripts/generateVersion.sh b/scripts/generateVersion.sh
+index fdcc471..f67035a 100755
+--- a/scripts/generateVersion.sh
++++ b/scripts/generateVersion.sh
+@@ -1,13 +1,13 @@
+ #!/bin/sh
+ cp -fr ./src/version.h.in ./src/version.h
+ 
+-HASH=${HASH-$(git rev-parse HEAD)}
+-BRANCH=${BRANCH-$(git branch --show-current)}
+-MESSAGE=${MESSAGE-$(git show | head -n 5 | tail -n 1 | sed -e 's/#//g' -e 's/\"//g')}
+-DATE=${DATE-$(git show --no-patch --format=%cd --date=local)}
+-DIRTY=${DIRTY-$(git diff-index --quiet HEAD -- || echo dirty)}
+-TAG=${TAG-$(git describe --tags)}
+-COMMITS=${COMMITS-$(git rev-list --count HEAD)}
++HASH="882f7ad7d2bbfc7440d0ccaef93b1cdd78e8e3ff"
++BRANCH="master"
++MESSAGE="VoidLinux Build"
++DATE="2025"
++DIRTY="No"
++TAG="0.47.2"
++COMMITS=""
+ 
+ sed -i -e "s#@HASH@#${HASH}#" ./src/version.h
+ sed -i -e "s#@BRANCH@#${BRANCH}#" ./src/version.h

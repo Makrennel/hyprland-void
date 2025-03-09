@@ -1,0 +1,21 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index aa8cdf9..b2ab5af 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -30,6 +30,7 @@ add_compile_definitions(HYPRLANG_INTERNAL)
+ set(CMAKE_CXX_STANDARD 23)
+ 
+ find_package(PkgConfig REQUIRED)
++find_package(fmt REQUIRED)
+ pkg_check_modules(deps REQUIRED IMPORTED_TARGET hyprutils>=0.1.1)
+ 
+ file(GLOB_RECURSE SRCFILES CONFIGURE_DEPENDS "src/*.cpp" "include/hyprlang.hpp")
+@@ -45,7 +46,7 @@ set_target_properties(
+              SOVERSION 2
+              PUBLIC_HEADER include/hyprlang.hpp)
+ 
+-target_link_libraries(hyprlang PkgConfig::deps)
++target_link_libraries(hyprlang PkgConfig::deps fmt::fmt)
+ 
+ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+   # for std::expected. probably evil. Arch's clang is very outdated tho...

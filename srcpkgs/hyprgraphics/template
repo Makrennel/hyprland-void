@@ -1,18 +1,26 @@
-# Template file for 'hyprutils'
-pkgname=hyprutils
-version=0.5.1
+# Template file for 'hyprgraphics'
+pkgname=hyprgraphics
+version=0.1.2
 revision=1
 build_style=cmake
-hostmakedepends="pkg-config"
 configure_args=" --no-warn-unused-cli -DCMAKE_BUILD_TYPE=Release"
 hostmakedepends="cmake pkg-config"
-makedepends="pixman-devel"
-short_desc="A small C++ library used across the Hypr* ecosystem"
+makedepends="
+   hyprutils-devel
+   libspng
+   libjpeg-turbo-devel
+   libwebp-devel
+   libjxl-devel
+   pixman-devel
+   cairo-devel
+   file-devel
+"
+short_desc="hyprland graphics resources and utilities"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"
-homepage="https://github.com/hyprwm/hyprutils"
-distfiles="https://github.com/hyprwm/hyprutils/archive/refs/tags/v${version}.tar.gz"
-checksum="0ad1d873012568661667cb5b599ddd59b3bea945a0d03c0f2ca3c7f4dff55798"
+homepage="https://github.com/hyprwm/hyprgraphics"
+distfiles="https://github.com/hyprwm/hyprgraphics/archive/refs/tags/v${version}.tar.gz"
+checksum="9409b29e80200e06237c124a9eaf5a367ab407e56f43a575bdc84ed2d551a154"
 
 build_options="clang gcc"
 build_options_default="gcc"
@@ -21,7 +29,7 @@ desc_option_gcc="Use gcc to build"
 
 if [ "$build_option_gcc" ]; then
    hostmakedepends+=" gcc"
-   makedepends+=" libgcc-devel"
+   makedepends+=" libgcc-devel fmt-devel"
 fi
 
 if [ "$build_option_clang" ]; then
@@ -29,7 +37,20 @@ if [ "$build_option_clang" ]; then
    makedepends+=" libcxx libcxx-devel libcxxabi libcxxabi-devel"
 fi
 
+_apply_patch() {
+   local args="$1" pname="$(basename $2)"
+
+   if [ ! -f ".${pname}_done" ]; then
+      patch -N $args -i $2
+      touch .${pname}_done
+   fi
+}
+
 pre_configure() {
+   if [ "$build_option_gcc" ]; then
+      _apply_patch -p1 ${FILESDIR}/gcc.patch
+   fi
+
    if [ "$build_option_clang" ]; then
       export CC=clang
       export CXX=clang++
@@ -40,15 +61,4 @@ pre_configure() {
 
 post_install() {
    vlicense LICENSE
-}
-
-hyprutils-devel_package() {
-   depends="hyprutils-${version}_${revision}"
-   short_desc+=" - development files"
-
-   pkg_install() {
-      vmove usr/include
-      vmove "usr/lib/*.so"
-      vmove usr/lib/pkgconfig
-   }
 }
