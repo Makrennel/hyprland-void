@@ -1,0 +1,24 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3d60b42..279447e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -26,7 +26,7 @@ include(GNUInstallDirs)
+ set(CMAKE_CXX_STANDARD 23)
+ add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wno-unused-value
+                     -Wno-missing-field-initializers -Wno-narrowing)
+-configure_file(systemd/hypridle.service.in systemd/hypridle.service @ONLY)
++# configure_file(systemd/hypridle.service.in systemd/hypridle.service @ONLY)
+ 
+ # dependencies
+ message(STATUS "Checking deps...")
+@@ -90,8 +90,8 @@ protocol("staging/ext-idle-notify/ext-idle-notify-v1.xml" "ext-idle-notify-v1"
+ 
+ # Installation
+ install(TARGETS hypridle)
+-install(FILES ${CMAKE_BINARY_DIR}/systemd/hypridle.service
+-        DESTINATION "lib/systemd/user")
++# install(FILES ${CMAKE_BINARY_DIR}/systemd/hypridle.service
++#         DESTINATION "lib/systemd/user")
+ 
+ install(
+   FILES ${CMAKE_SOURCE_DIR}/assets/example.conf

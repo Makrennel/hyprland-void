@@ -1,25 +1,23 @@
-# Template file for 'hyprcursor'
-pkgname=hyprcursor
-version=0.1.11
+# Template file for 'hyprsunset'
+pkgname=hyprsunset
+version=0.1.0
 revision=1
 build_style=cmake
 configure_args=" --no-warn-unused-cli -DCMAKE_BUILD_TYPE=Release"
-hostmakedepends="cmake pkg-config"
+hostmakedepends="cmake pkg-config git"
 makedepends="
-	libtoml++-devel
-	hyprlang-devel
-	cairo-devel
-	pango-devel
-	harfbuzz-devel
-	librsvg-devel
-	libzip-devel
+	hyprland-protocols
+	hyprwayland-scanner
+   hyprutils-devel
+	wayland-devel
+	wayland-protocols
 "
-short_desc="Hyprland cursor format, library and utilities"
+short_desc="An application to enable a blue-light filter on Hyprland"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"
-homepage="https://github.com/hyprwm/hyprcursor"
-distfiles="https://github.com/hyprwm/hyprcursor/archive/refs/tags/v${version}.tar.gz"
-checksum="17e4576b884e6bdb463b445cffff099ad16647b826a87a67b78d38b8cad4c39e"
+homepage="https://github.com/hyprwm/hyprsunset"
+distfiles="https://github.com/hyprwm/hyprsunset/archive/refs/tags/v${version}.tar.gz"
+checksum="88c9fb2c3efb3ccb398c66a90658765312faf818678a6a8e0e727cfba5f13a9b"
 
 build_options="clang gcc"
 build_options_default="gcc"
@@ -47,15 +45,4 @@ pre_configure() {
 
 post_install() {
 	vlicense LICENSE
-}
-
-hyprcursor-devel_package() {
-	depends="hyprcursor-${version}_${revision}"
-	short_desc+=" - development files"
-
-	pkg_install() {
-		vmove usr/include
-		vmove "usr/lib/*.so"
-		vmove usr/lib/pkgconfig
-	}
 }

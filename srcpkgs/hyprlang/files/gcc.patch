@@ -1,0 +1,51 @@
+diff --git a/include/hyprlang.hpp b/include/hyprlang.hpp
+index 863b277..9d15331 100644
+--- a/include/hyprlang.hpp
++++ b/include/hyprlang.hpp
+@@ -8,8 +8,9 @@
+ #include <string>
+ #include <ostream>
+ #include <vector>
+-#include <print>
++#include <fmt/core.h>
+ #include <cstdlib>
++#include <cstdint>
+ 
+ class CConfigImpl;
+ struct SConfigDefaultValue;
+@@ -467,7 +468,7 @@ namespace Hyprlang {
+             const auto VAL = pConfig->getConfigValuePtr(val);
+ 
+             if (!VAL) {
+-                std::println("CSimpleConfigValue: value not found");
++                fmt::print("CSimpleConfigValue: value not found");
+                 abort();
+             }
+ 
+@@ -484,7 +485,7 @@ namespace Hyprlang {
+             const bool CUSTOMEX = (typeid(T) == typeid(Hyprlang::CUSTOMTYPE) && (TYPE == typeid(Hyprlang::CUSTOMTYPE*) || TYPE == typeid(void*) /* dunno why it does this? */));
+ 
+             if (typeid(T) != TYPE && !STRINGEX && !CUSTOMEX) {
+-                std::println("CSimpleConfigValue: Mismatched type in CConfigValue<T>, got {} but has {}", typeid(T).name(), TYPE.name());
++                fmt::print("CSimpleConfigValue: Mismatched type in CConfigValue<T>, got {} but has {}", typeid(T).name(), TYPE.name());
+                 abort();
+             }
+ #endif
+@@ -504,7 +505,7 @@ namespace Hyprlang {
+ 
+     template <>
+     inline std::string* CSimpleConfigValue<std::string>::ptr() const {
+-        std::print("Impossible to implement ptr() of CConfigValue<std::string>");
++        fmt::print("Impossible to implement ptr() of CConfigValue<std::string>");
+         abort();
+         return nullptr;
+     }
+@@ -531,7 +532,7 @@ namespace Hyprlang {
+ 
+     template <>
+     inline Hyprlang::CUSTOMTYPE CSimpleConfigValue<Hyprlang::CUSTOMTYPE>::operator*() const {
+-        std::print("Impossible to implement operator* of CConfigValue<Hyprlang::CUSTOMTYPE>, use ptr()");
++        fmt::print("Impossible to implement operator* of CConfigValue<Hyprlang::CUSTOMTYPE>, use ptr()");
+         abort();
+         return *ptr();
+     }

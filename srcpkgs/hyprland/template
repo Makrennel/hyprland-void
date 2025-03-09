@@ -1,53 +1,65 @@
 # Template file for 'hyprland'
 pkgname=hyprland
-version=0.44.1
-revision=2
+version=0.47.2
+revision=1
 build_style=cmake
-configure_args=" --no-warn-unused-cli \
-  -DCMAKE_BUILD_TYPE:STRING=Release \
-  -DCMAKE_INSTALL_PREFIX:PATH=/usr \
-  -DNO_SYSTEMD:STRING=true \
-  -G Ninja
-"
-hstmkdeps="
-  cmake
-  cpio
-  gcc
-  glslang
-  hyprwayland-scanner
-  jq
-  make
-  meson
-  ninja
-  pkgconf
-  wayland-devel
-"
-hostmakedepends=$hstmkdeps
+configure_args=" --no-warn-unused-cli -DCMAKE_BUILD_TYPE=Release -DNO_SYSTEMD=ON"
+hostmakedepends="cmake pkg-config autoconf git cpio glslang jq make ninja"
 makedepends="
-  aquamarine
-  cairo-devel
-  hwids
-  hyprcursor
-  hyprlang
-  hyprutils
-  libdisplay-info-devel
-  libdrm-devel
-  libgbm-devel
-  libglvnd-devel
-  libinput-devel
-  libliftoff-devel
-  libseat-devel
-  libxcb-devel
-  libXcursor-devel
-  libxkbcommon-devel
-  pango-devel
-  tomlplusplus
-  wayland-devel
-  wayland-protocols
-  xcb-util-errors-devel
-  xcb-util-renderutil-devel
-  xcb-util-wm-devel
-  xorg-server-xwayland
+	hyprgraphics
+	hyprcursor-devel
+	hyprutils-devel
+	aquamarine-devel
+	hyprlang-devel
+	hyprland-protocols
+	hyprwayland-scanner
+	libtoml++-devel
+	abseil-cpp-devel
+	hwids
+	cairo-devel
+	libdisplay-info-devel
+	libdrm-devel
+	libgbm-devel
+	libglvnd-devel
+	libinput-devel
+	libliftoff-devel
+	libseat-devel
+	libxcb-devel
+	libXcursor-devel
+	libxkbcommon-devel
+	pango-devel
+	wayland-devel
+	wayland-protocols
+	xorg-server-xwayland
+	udis86-devel
+	re2-devel
+	xcb-util-errors-devel
+	xcb-util-renderutil-devel
+	xcb-util-wm-devel
+	xcb-util-image-devel
+	xorg-server-xwayland
+"
+depends="
+	hyprlang
+	hyprwayland-scanner
+	hyprgraphics
+	hyprutils
+	hyprcursor
+	cairo
+	glslang
+	libliftoff
+	libxcb
+	libXfixes
+	polkit
+	vulkan-loader
+	Vulkan-ValidationLayers
+	wayland
+	wayland-protocols
+	xcb-proto
+	xcb-util
+	xcb-util-keysyms
+	xorg-server-xwayland
+	re2
 "
 short_desc="Dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 maintainer="Makrennel <makrommel@protonmail.ch>"
@@ -55,36 +67,57 @@ license="BSD-3-Clause"
 homepage="https://hyprland.org/"
 changelog="https://github.com/hyprwm/Hyprland/releases"
 distfiles="https://github.com/hyprwm/Hyprland/releases/download/v${version}/source-v${version}.tar.gz"
-checksum=a901b9ce5dac48a2b92f287d902c5dc33a05e9946fd082c43142f205246dfc63
+checksum="e7f4447c9e24149cf2fd57057410bc90cb3c4ecaa35b6ec2a60a9d44d2fb2feb"
 
-if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
-  configure_args+=" -DCMAKE_CXX_FLAGS=\"-lexecinfo\""
-  makedepends+=" libexecinfo-devel"
-  depends+=" libexecinfo"
+build_options="clang gcc"
+build_options_default="gcc"
+desc_option_clang="Use clang to build"
+desc_option_gcc="Use gcc to build"
+
+if [ "$build_option_gcc" ]; then
+	hostmakedepends+=" gcc"
+	makedepends+=" libgcc-devel fmt-devel"
 fi
 
+if [ "$build_option_clang" ]; then
+	hostmakedepends+=" clang19"
+	makedepends+=" libcxx libcxx-devel libcxxabi libcxxabi-devel"
+fi
+
+if [ "$XBPS_TARGET_LIBC" = "glibc" ]; then
+	makedepends+=" glaze"
+fi
+
+if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
+	configure_args+=" -DCMAKE_CXX_FLAGS=\"-lexecinfo\""
+	makedepends+=" libexecinfo-devel"
+	depends+=" libexecinfo"
+fi
+
+_apply_patch() {
+	local args="$1" pname="$(basename $2)"
+
+	if [ ! -f ".${pname}_done" ]; then
+		patch -N $args -i $2
+		touch .${pname}_done
+	fi
+}
+
+pre_configure() {
+	_apply_patch -p1 ${FILESDIR}/version.patch
+
+	if [ "$build_option_gcc" ]; then
+		_apply_patch -p1 ${FILESDIR}/gcc.patch
+	fi
+
+	if [ "$build_option_clang" ]; then
+		export CC=clang
+		export CXX=clang++
+
+		configure_args+=" -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_STANDARD_REQUIRED=ON -DCMAKE_CXX_FLAGS=-stdlib=libc++"
+	fi
+}
+
 post_install() {
-  # license
-  vlicense LICENSE
-
-  # headers
-  vmkdir usr/include/hyprland
-  vmkdir usr/include/hyprland/protocols
-  vmkdir usr/share/pkgconfig
-
-  cmake --build ./build --config Release --target generate-protocol-headers
-
-  find src -name '*.h*' -print0 | cpio --quiet -0dump ${DESTDIR}/usr/include/hyprland
-  install -Dm0644 protocols/*.h* ${DESTDIR}/usr/include/hyprland/protocols
-  vinstall build/hyprland.pc 644 usr/share/pkgconfig
+	vlicense LICENSE
 }
-
-hyprland-devel_package() {
-  depends="${sourcepkg}>=${version}_${revision} ${hstmkdeps} ${makedepends}"
-  short_desc="Dynamic tiling Wayland compositor - development files"
-  pkg_install() {
-    vmove usr/include
-    vmove usr/share/pkgconfig
-  }
-}
-

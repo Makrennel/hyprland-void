@@ -3,17 +3,62 @@ pkgname=hypridle
 version=0.1.5
 revision=1
 build_style=cmake
-hostmakedepends="cmake pkgconf wayland-devel wayland-protocols"
-makedepends="hyprlang sdbus-cpp wayland-devel wayland-protocols"
+configure_args=" --no-warn-unused-cli -DCMAKE_BUILD_TYPE=Release"
+hostmakedepends="cmake pkg-config"
+makedepends="
+	sdbus-cpp
+	sdbus-cpp-devel
+	libelogind
+	elogind-devel
+	hyprwayland-scanner
+	hyprlang-devel
+	hyprutils-devel
+	wayland-devel
+	wayland-protocols
+"
 short_desc="Hyprland's idle daemon"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"
 homepage="https://github.com/hyprwm/hypridle"
 changelog="https://github.com/hyprwm/${pkgname}/releases"
 distfiles="https://github.com/hyprwm/hypridle/archive/refs/tags/v${version}.tar.gz"
-checksum=174d4b4706ec5c79e6d80a7cc3b297b5564c923f60f408c1638b55424a998a4b
+checksum="174d4b4706ec5c79e6d80a7cc3b297b5564c923f60f408c1638b55424a998a4b"
 
-post_install() {
-  vlicense LICENSE
+build_options="clang gcc"
+build_options_default="gcc"
+desc_option_clang="Use clang to build"
+desc_option_gcc="Use gcc to build"
+
+if [ "$build_option_gcc" ]; then
+	hostmakedepends+=" gcc"
+	makedepends+=" libgcc-devel fmt-devel"
+fi
+
+if [ "$build_option_clang" ]; then
+	hostmakedepends+=" clang19"
+	makedepends+=" libcxx libcxx-devel libcxxabi libcxxabi-devel"
+fi
+
+_apply_patch() {
+	local args="$1" pname="$(basename $2)"
+
+	if [ ! -f ".${pname}_done" ]; then
+		patch -N $args -i $2
+		touch .${pname}_done
+	fi
 }
 
+pre_configure() {
+	_apply_patch -p1 ${FILESDIR}/systemd.patch
+
+	if [ "$build_option_clang" ]; then
+		export CC=clang
+		export CXX=clang++
+
+		configure_args+=" -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_FLAGS=-stdlib=libc++"
+	fi
+}
+
+post_install() {
+	vlicense LICENSE
+}

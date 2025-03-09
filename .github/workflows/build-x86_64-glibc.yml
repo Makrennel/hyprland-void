@@ -65,12 +65,18 @@ jobs:
       - name: Prepare
         run: $SCRIPT_DIR/clone-and-prepare
 
-      # All declared individually for logging purposes
-      - name: Build tomlplusplus
-        run: PACKAGE=tomlplusplus $SCRIPT_DIR/build-package
+      # Build deps packages  
+
+      - name: Build libtoml++
+        run: PACKAGE=libtoml++ $SCRIPT_DIR/build-package
+
+      - name: Build libspng
+        run: PACKAGE=libspng $SCRIPT_DIR/build-package
 
       - name: Build sdbus-cpp
         run: PACKAGE=sdbus-cpp $SCRIPT_DIR/build-package
+
+      # All declared individually for logging purposes
 
       - name: Build hyprutils
         run: PACKAGE=hyprutils $SCRIPT_DIR/build-package
@@ -81,14 +87,14 @@ jobs:
       - name: Build hyprcursor
         run: PACKAGE=hyprcursor $SCRIPT_DIR/build-package
 
+      - name: Build hyprgraphics
+        run: PACKAGE=hyprgraphics $SCRIPT_DIR/build-package
+
       - name: Build hyprwayland-scanner
         run: PACKAGE=hyprwayland-scanner $SCRIPT_DIR/build-package
 
       - name: Build aquamarine
         run: PACKAGE=aquamarine $SCRIPT_DIR/build-package
-
-      - name: Build hyprland
-        run: PACKAGE=hyprland $SCRIPT_DIR/build-package
 
       - name: Build hyprland-protocols
         run: PACKAGE=hyprland-protocols $SCRIPT_DIR/build-package
@@ -105,6 +111,24 @@ jobs:
       - name: Build hyprpaper
         run: PACKAGE=hyprpaper $SCRIPT_DIR/build-package
 
+      - name: Build hyprsunset
+        run: PACKAGE=hyprsunset $SCRIPT_DIR/build-package
+
+      - name: Build hyprland
+        run: PACKAGE=hyprland $SCRIPT_DIR/build-package
+
+      - name: Build hyprland-qt-support
+        run: PACKAGE=hyprland-qt-support $SCRIPT_DIR/build-package
+
+      - name: Build hyprpolkitagent
+        run: PACKAGE=hyprpolkitagent $SCRIPT_DIR/build-package
+
+      - name: Build hyprsysteminfo
+        run: PACKAGE=hyprsysteminfo $SCRIPT_DIR/build-package
+
+      - name: Build hyprland-qtutils
+        run: PACKAGE=hyprland-qtutils $SCRIPT_DIR/build-package
+
       - name: Export XBPS_TARGET_ARCH
         run: echo "XBPS_TARGET_ARCH=${{ env.TARGET_ARCH }}" >> "$GITHUB_ENV"
 
@@ -119,4 +143,3 @@ jobs:
 
       - name: Push new packages to binary repository
         run: cd /work/$REPO_NAME && sudo -Eu builder $SCRIPT_DIR/push-repository
-
