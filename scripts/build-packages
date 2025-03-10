@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+
+BUILD="sudo -Eu builder /work/void-packages/xbps-src $BUILD_ARGS -j$(nproc) -s -H /work/hostdir pkg"
+
+COMMAND="
+  $BUILD tomlplusplus
+  $BUILD sdbus-cpp
+  $BUILD hyprutils
+  $BUILD hyprlang
+  $BUILD hyprcursor
+  $BUILD hyprwayland-scanner
+  $BUILD aquamarine
+  $BUILD hyprland
+  $BUILD hyprland-protocols
+  $BUILD xdg-desktop-portal-hyprland
+  $BUILD hypridle
+  $BUILD hyprlock
+  $BUILD hyprpaper
+"
+
+echo "Running command: $COMMAND"
+sh -c "$COMMAND"
+

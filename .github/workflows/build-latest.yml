@@ -1,0 +1,60 @@
+name: "Build Latest Packages"
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Hyprland
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/void-linux/void-glibc-full:20250227R1
+      options: --platform linux/amd64 --privileged
+
+    strategy:
+      matrix:
+        arch: [ x86_64, x86_64-musl, aarch64, aarch64-musl ]
+    env:
+      REPO_OWNER: "${{ github.repository_owner }}"
+      REPO_NAME: "${{ github.event.repository.name }}"
+      TARGET_ARCH: "${{ matrix.arch }}"
+      SCRIPT_DIR: "/work/${{ github.event.repository.name }}/scripts"
+      BUILD_ARGS: ""
+
+    steps:
+      - name: Prepare container and create a non-root user
+        run: |
+          mkdir -p /etc/xbps.d && cp /usr/share/xbps.d/*-repository-*.conf /etc/xbps.d/
+          sed -i 's|repo-default|repo-ci|g' /etc/xbps.d/*-repository-*.conf
+          xbps-install -Syu xbps && xbps-install -yu && xbps-install -y sudo bash grep curl git
+          useradd -G xbuilder -M builder
+
+      - name: Clone hyprland-void repo
+        run: |
+          mkdir /work && cd /work
+          git clone https://github.com/$REPO_OWNER/$REPO_NAME.git
+          $SCRIPT_DIR/set-environment
+
+      - name: Prepare void-packages
+        run: $SCRIPT_DIR/clone-and-prepare
+
+      - name: Build packages
+        run: $SCRIPT_DIR/build-packages
+
+      - name: Copy relevant packages for indexing and signing
+        run: |
+          export PEM_PAT=${{ secrets.PEM_PAT }}
+          export XBPS_PASSPHRASE=${{ secrets.PRIVATE_PEM_PASSPHRASE }}
+          export XBPS_TARGET_ARCH=${{ env.TARGET_ARCH }}
+          sudo -Eu builder $SCRIPT_DIR/index-packages
+          sudo -Eu builder $SCRIPT_DIR/sign-packages
+
+      - name: Push new packages to binary repository
+        run: |
+          export ACCESS_GIT=${{ secrets.ACCESS_GIT }}
+          sudo -Eu builder $SCRIPT_DIR/push-repository
+

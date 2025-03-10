@@ -3,22 +3,23 @@
 # We'll blow the size of the repository up very quickly if we do not delete old iterations of the repository
 
 COMMAND="
+  cd /work/$REPO_NAME
+
   # Config
   git config user.name \"github-actions[bot]\"
   git config user.email \"github-actions[bot]@users.noreply.github.com\"
 
   # Delete old binary repository, create new one
-  git push https://$REPO_OWNER:$(cat /work/ACCESS_GIT_TOKEN)@github.com/$REPO_OWNER/$REPO_NAME.git -d repository-$RESULT_NAME
+  git push https://$REPO_OWNER:$ACCESS_GIT@github.com/$REPO_OWNER/$REPO_NAME.git -d repository-$RESULT_NAME
   git switch --orphan repository-$RESULT_NAME
 
   # Populate and push new binary repository
   cp /work/packages/* ./
   git add .
   git commit -m \"Upload latest packages to repository\"
-  git push https://$REPO_OWNER:$(cat /work/ACCESS_GIT_TOKEN)@github.com/$REPO_OWNER/$REPO_NAME.git repository-$RESULT_NAME
+  git push -f https://$REPO_OWNER:$ACCESS_GIT@github.com/$REPO_OWNER/$REPO_NAME.git repository-$RESULT_NAME
 "
 
 echo "Running command: $COMMAND"
-echo "$ACCESS_GIT_TOKEN" >> /work/ACCESS_GIT_TOKEN # Hide secret from being printed to the log
 sh -c "$COMMAND"
 

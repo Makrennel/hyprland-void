@@ -1,9 +1,0 @@
-#!/usr/bin/env sh
-
-COMMAND="
-  sudo -Eu builder /work/void-packages/xbps-src $BUILD_ARGS -j$(nproc) -s -H /work/hostdir pkg $PACKAGE
-"
-
-echo "Running command: $COMMAND"
-sh -c "$COMMAND"
-
