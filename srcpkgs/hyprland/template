@@ -9,7 +9,7 @@ configure_args=" --no-warn-unused-cli \
   -DNO_SYSTEMD:STRING=true \
   -G Ninja
 "
-hstmkdeps="
+othermakedepends="
   cmake
   cpio
   gcc
@@ -22,7 +22,7 @@ hstmkdeps="
   pkgconf
   wayland-devel
 "
-hostmakedepends=$hstmkdeps
+hostmakedepends=$othermakedepends
 makedepends="
   aquamarine
   cairo-devel
@@ -80,7 +80,7 @@ post_install() {
 }
 
 hyprland-devel_package() {
-  depends="${sourcepkg}>=${version}_${revision} ${hstmkdeps} ${makedepends}"
+  depends="${sourcepkg}>=${version}_${revision} ${othermakedepends} ${makedepends}"
   short_desc="Dynamic tiling Wayland compositor - development files"
   pkg_install() {
     vmove usr/include

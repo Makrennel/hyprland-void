@@ -30,7 +30,7 @@ jobs:
         run: |
           mkdir -p /etc/xbps.d && cp /usr/share/xbps.d/*-repository-*.conf /etc/xbps.d/
           sed -i 's|repo-default|repo-ci|g' /etc/xbps.d/*-repository-*.conf
-          xbps-install -Syu xbps && xbps-install -yu && xbps-install -y sudo bash grep curl git
+          xbps-install -Syu xbps && xbps-install -yu && xbps-install -y sudo bash grep curl git kotlin-bin
           useradd -G xbuilder -M builder
 
       - name: Clone hyprland-void repo
@@ -38,6 +38,9 @@ jobs:
           mkdir /work && cd /work
           git clone https://github.com/$REPO_OWNER/$REPO_NAME.git
           $SCRIPT_DIR/set-environment
+
+      - name: Automatically generate a build order
+        run: $SCRIPT_DIR/generate-build-order.kts
 
       - name: Prepare void-packages
         run: $SCRIPT_DIR/clone-and-prepare
@@ -57,4 +60,3 @@ jobs:
         run: |
           export ACCESS_GIT=${{ secrets.ACCESS_GIT }}
           sudo -Eu builder $SCRIPT_DIR/push-repository
-
