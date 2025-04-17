@@ -1,0 +1,22 @@
+# Template file for 'glaze'
+pkgname=glaze
+version=5.0.2
+revision=1
+build_style=cmake
+hostmakedepends="
+  cmake
+  pkgconf
+"
+makedepends="
+  libsanitizer-devel
+"
+short_desc="Extremely fast, in memory, JSON and interface library for modern C++"
+maintainer="Makrennel <makrommel@protonmail.ch>"
+license="MIT"
+homepage="https://github.com/stephenberry/glaze"
+distfiles="https://github.com/stephenberry/glaze/archive/refs/tags/v${version}.tar.gz"
+checksum=ed47ba0b5dcef5a2d2a41b4863e91a3b509c469a70c1a1fed885545d1b672681
+
+post_install() {
+  vlicense LICENSE
+}
