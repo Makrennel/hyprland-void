@@ -1,17 +1,39 @@
 # Template file for 'hyprlock'
 pkgname=hyprlock
-version=0.5.0
+version=0.8.0
 revision=1
 build_style=cmake
-hostmakedepends="cmake pkgconf wayland-devel wayland-protocols"
-makedepends="cairo-devel hyprlang libdrm-devel libxkbcommon-devel MesaLib-devel pango-devel pam-devel wayland-devel wayland-protocols hyprutils libjpeg-turbo-devel libwebp-devel file-devel sdbus-cpp"
+configure_args+=" --no-warn-unused-cli"
+configure_args+=" -DCMAKE_BUILD_TYPE:STRING=Release"
+hostmakedepends="
+  cmake
+  pkgconf
+  wayland-devel
+  wayland-protocols
+"
+makedepends="
+  cairo-devel
+  file-devel
+  hyprlang
+  hyprutils
+  libdrm-devel
+  libjpeg-turbo-devel
+  libwebp-devel
+  libxkbcommon-devel
+  MesaLib-devel
+  pam-devel
+  pango-devel
+  sdbus-cpp
+  wayland-devel
+  wayland-protocols
+"
 short_desc="Hyprland's GPU-accelerated screen locking utility"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"
 homepage="https://github.com/hyprwm/hyprlock"
 changelog="https://github.com/hyprwm/${pkgname}/releases"
 distfiles="https://github.com/hyprwm/${pkgname}/archive/refs/tags/v${version}.tar.gz"
-checksum=4f8a0199de205ad21a4e3da88c0196514a0ba3c6162e44f93e7cfb96371daf99
+checksum=70154a004a270cd91cb62031314e8371dc32c636d68b8bb979afd238dd501ccf
 
 post_install() {
   vlicense LICENSE

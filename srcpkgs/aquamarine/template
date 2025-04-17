@@ -1,15 +1,36 @@
 # Template file for 'aquamarine'
 pkgname=aquamarine
-version=0.4.4
-revision=2
+version=0.8.0
+revision=1
 build_style=cmake
-hostmakedepends="cmake pkgconf hyprwayland-scanner"
-makedepends="hyprutils MesaLib-devel hyprwayland-scanner libseat-devel libinput-devel wayland-devel wayland-protocols pixman-devel libdisplay-info-devel hwids"
+configure_args+=" --no-warn-unused-cli"
+configure_args+=" -DCMAKE_BUILD_TYPE:STRING=Release"
+configure_args+=" -DCMAKE_INSTALL_PREFIX:PATH=/usr"
+hostmakedepends="
+  cmake
+  hyprwayland-scanner
+  pkgconf
+"
+makedepends="
+  hwids
+  hyprutils
+  hyprwayland-scanner
+  libdisplay-info-devel
+  libinput-devel
+  libseat-devel
+  MesaLib-devel
+  pixman-devel
+  wayland-devel
+  wayland-protocols
+"
 short_desc="Aquamarine is a very light linux rendering backend library"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="LGPL-3.0-only"
 homepage="https://hyprland.org/hyprlang/index.html"
 changelog="https://github.com/hyprwm/aquamarine/releases"
 distfiles="https://github.com/hyprwm/aquamarine/archive/refs/tags/v${version}.tar.gz"
-checksum=2ac672bce27ac8a2f2d236582d49a2b6bbe243e9a7a5d06881e636607e897110
+checksum=1c3570de268fff008c6dd76472d783710b7f62c545f76091580c9edd13ad23d5
 
+post_install() {
+  vlicense LICENSE
+}

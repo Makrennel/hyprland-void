@@ -3,9 +3,23 @@ pkgname=sdbus-cpp
 version=2.0.0
 revision=1
 build_style=cmake
-hostmakedepends="cmake meson ninja pkgconf git m4 rsync gperf"
-makedepends="libmount-devel libcap-devel libelogind elogind-devel elogind"
-depends="libmount libcap libelogind elogind-devel elogind"
+hostmakedepends="
+  cmake
+  meson
+  ninja
+  pkgconf
+  git
+  m4
+  rsync
+  gperf
+"
+makedepends="
+  elogind
+  elogind-devel
+  libcap-devel
+  libelogind
+  libmount-devel
+"
 short_desc="High-level C++ D-Bus library to provide API in modern C++"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="LGPL-2.1-only"
@@ -14,3 +28,7 @@ changelog="https://github.com/Kistler-Group/${pkgname}/releases"
 distfiles="https://github.com/Kistler-Group/${pkgname}/archive/refs/tags/v${version}.tar.gz"
 checksum=88af4569161a0d0192f0f4a94582a1af4e75722499d06984fb7f91f638f5afb3
 
+post_install() {
+  vlicense COPYING
+  vlicense COPYING-LGPL-Exception
+}

@@ -2,8 +2,11 @@
 pkgname=tomlplusplus
 version=3.4.0
 revision=1
-build_style="meson"
-hostmakedepends="pkgconf cmake"
+build_style=meson
+hostmakedepends="
+  cmake
+  pkgconf
+"
 short_desc="Header-only TOML config file parser and serializer for C++17"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="MIT"
