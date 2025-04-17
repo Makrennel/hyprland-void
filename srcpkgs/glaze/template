@@ -5,6 +5,7 @@ revision=1
 build_style=cmake
 hostmakedepends="
   cmake
+  git
   pkgconf
 "
 short_desc="Extremely fast, in memory, JSON and interface library for modern C++"

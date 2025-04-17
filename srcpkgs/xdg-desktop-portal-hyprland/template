@@ -38,7 +38,7 @@ maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"
 homepage="https://github.com/hyprwm/xdg-desktop-portal-hyprland"
 distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
-checksum=7560300e48099270487fa953be5eca6c2bd8fd3a3c27c4f4f3a78adf2b30fd70
+checksum=3f7d94fd408ed5e3a9b639d3dd8502e2169decc34f285e8552434da5fddf497e
 
 post_install() {
   vlicense LICENSE
