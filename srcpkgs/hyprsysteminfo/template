@@ -12,7 +12,7 @@ hostmakedepends="
 "
 makedepends="
   hyprland-qt-support
-  hyprutils-devel
+  hyprutils
   qt6-base-devel
   qt6-base-private-devel
   qt6-declarative-devel

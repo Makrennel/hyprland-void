@@ -14,7 +14,7 @@ hostmakedepends="
 makedepends="
 	hyprwayland-scanner
 	hyprland-protocols
-  hyprutils-devel
+  hyprutils
 	wayland-devel
 	wayland-protocols
 "
