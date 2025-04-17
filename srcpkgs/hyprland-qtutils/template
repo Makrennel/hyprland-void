@@ -13,6 +13,8 @@ hostmakedepends="
 makedepends="
   hyprutils
   hyprland-qt-support
+"
+qtmakedepends="
   qt6-base-devel
   qt6-base-private-devel
   qt6-declarative-private-devel
@@ -21,6 +23,8 @@ makedepends="
   qt6-wayland-devel
   qt6-wayland-private-devel
 "
+hostmakedepends+=" ${qtmakedepends}"
+makedepends+=" ${qtmakedepends}"
 short_desc="Qt/QML utility apps for Hyprland"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"

@@ -14,12 +14,16 @@ makedepends="
   hyprland-qt-support
   hyprlang
   hyprutils
+"
+qtmakedepends="
   polkit-qt6-devel
   qt6-base-devel
   qt6-declarative-devel
   qt6-tools-devel
   qt6-wayland-devel
 "
+hostmakedepends+=" ${qtmakedepends}"
+makedepends+=" ${qtmakedepends}"
 short_desc="Simple polkit authentication agent for Hyprland, written in QT/QML"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"

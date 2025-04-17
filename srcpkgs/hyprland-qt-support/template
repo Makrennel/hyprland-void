@@ -13,11 +13,15 @@ hostmakedepends="
 "
 makedepends="
   hyprlang
+"
+qtmakedepends="
   qt6-base-devel
   qt6-declarative-devel
   qt6-tools-devel
   qt6-wayland-devel
 "
+hostmakedepends+=" ${qtmakedepends}"
+makedepends+=" ${qtmakedepends}"
 short_desc="QML style provider for Hypr* QT apps"
 maintainer="Makrennel <makrommel@protonmail.ch>"
 license="BSD-3-Clause"

@@ -9,14 +9,15 @@ configure_args+=" -DCMAKE_INSTALL_PREFIX:PATH=/usr"
 hostmakedepends="
   cmake
   git
+  hyprwayland-scanner
   pkgconf
 "
 makedepends="
-	hyprwayland-scanner
-	hyprland-protocols
+  hyprwayland-scanner
+  hyprland-protocols
   hyprutils
-	wayland-devel
-	wayland-protocols
+  wayland-devel
+  wayland-protocols
 "
 short_desc="An application to enable a blue-light filter on Hyprland"
 maintainer="Makrennel <makrommel@protonmail.ch>"
@@ -26,5 +27,5 @@ distfiles="https://github.com/hyprwm/hyprsunset/archive/refs/tags/v${version}.ta
 checksum=178d2b6c0042e005770eb31492fb7583c9fd25e37351a29f44bff56e87a52ad3
 
 post_install() {
-	vlicense LICENSE
+  vlicense LICENSE
 }
