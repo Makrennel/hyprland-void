@@ -3,6 +3,9 @@ pkgname=glaze
 version=4.4.3
 revision=1
 build_style=cmake
+configure_args+=" -DBUILD_TESTING:BOOL=OFF"
+configure_args+=" -DCMAKE_BUILD_TYPE:STRING=Release"
+configure_args+=" -Dglaze_ENABLE_FUZZING:BOOL=OFF"
 hostmakedepends="
   cmake
   git
