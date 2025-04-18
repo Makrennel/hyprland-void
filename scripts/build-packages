@@ -4,8 +4,10 @@ BUILD="sudo -Eu builder /work/void-packages/xbps-src $BUILD_ARGS -j$(nproc) -s -
 
 COMMAND="
   while IFS= read -r package; do
+    echo \"::group::Building \$package...\"
     echo \"$BUILD \$package\"
     $BUILD \$package
+    echo \"::endgroup::\"
   done < /work/build-order
 "
 
