@@ -1,6 +1,6 @@
 # Template file for 'sdbus-cpp'
 pkgname=sdbus-cpp
-version=2.0.0
+version=2.1.0
 revision=1
 build_style=cmake
 hostmakedepends="
@@ -26,7 +26,7 @@ license="LGPL-2.1-only"
 homepage="https://github.com/Kistler-Group/sdbus-cpp"
 changelog="https://github.com/Kistler-Group/${pkgname}/releases"
 distfiles="https://github.com/Kistler-Group/${pkgname}/archive/refs/tags/v${version}.tar.gz"
-checksum=88af4569161a0d0192f0f4a94582a1af4e75722499d06984fb7f91f638f5afb3
+checksum=6025e5dc6cddd532ff960d14e68ced5f42a1916b23a73fea6bcb437f06992eaf
 
 post_install() {
   vlicense COPYING
