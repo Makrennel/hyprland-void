@@ -1,6 +1,6 @@
 # Template file for 'hyprlang'
 pkgname=hyprlang
-version=0.6.1
+version=0.6.3
 revision=1
 build_style=cmake
 configure_args+=" --no-warn-unused-cli"
@@ -19,5 +19,4 @@ license="LGPL-3.0-only"
 homepage="https://hyprland.org/hyprlang/index.html"
 changelog="https://github.com/hyprwm/hyprlang/releases"
 distfiles="https://github.com/hyprwm/hyprlang/archive/refs/tags/v${version}.tar.gz"
-checksum=8537bb112c633b3463850747d1fd29e1e1884df2cc4659c12736b941ba06e6bb
-
+checksum=f5effe017edc7a0036c20c7ecbea4edc2bfdacbc0f791b283bd21ec202384251
