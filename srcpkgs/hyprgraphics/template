@@ -1,7 +1,7 @@
 # Template file for 'hyprgraphics'
 pkgname=hyprgraphics
 version=0.1.3
-revision=1
+revision=2
 build_style=cmake
 configure_args+=" --no-warn-unused-cli"
 configure_args+=" -DCMAKE_BUILD_TYPE:STRING=Release"
