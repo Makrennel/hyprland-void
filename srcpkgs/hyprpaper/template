@@ -1,6 +1,6 @@
 # Template file for 'hyprpaper'
 pkgname=hyprpaper
-version=0.7.4
+version=0.7.5
 revision=1
 build_style=cmake
 configure_args+=" --no-warn-unused-cli"
